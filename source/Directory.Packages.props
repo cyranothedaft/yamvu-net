@@ -15,4 +15,10 @@
     <PackageVersion Include="yamvu-core" Version="0.2.1-alpha" />
     <PackageVersion Include="yamvu" Version="0.2.1-alpha" /> -->
   </ItemGroup>
+  <ItemGroup>
+    <PackageVersion Include="Microsoft.Extensions.Logging.Abstractions" Version="9.0.3" />
+    <PackageVersion Include="Microsoft.Extensions.Logging.Console" Version="9.0.2" />
+    <PackageVersion Include="Microsoft.Extensions.Logging.Debug" Version="9.0.3" />
+    <PackageVersion Include="WelterKit" Version="0.0.1-beta" />
+  </ItemGroup>
 </Project>

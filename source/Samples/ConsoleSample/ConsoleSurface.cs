@@ -1,26 +1,57 @@
-﻿namespace ConsoleSample;
+﻿using System.Diagnostics;
+using ConsoleSample.AppEvents;
+using ConsoleSample.UIBasics;
 
 
-internal class ConsoleSurface(int Width, int Height) : IDisposable {
-   private bool _savedCursorVisibility;
-   private (int left, int top) _savedCursorPos;
+
+namespace ConsoleSample;
 
 
-   public void Initialize() {
-      saveCursorVisibility();
+internal class ConsoleSurface : IDisposable {
+   private readonly bool _savedCursorVisibility;
+   private readonly (int left, int top) _savedCursorPos;
+   private readonly KeyPressMonitor _keyPressMonitor;
+
+   public int Width { get; }
+   public int Height { get; }
+
+
+   public ConsoleSurface(int width, int height) {
+      Width  = width;
+      Height = height;
+
+      _savedCursorVisibility = Console.CursorVisible;
       Console.CursorVisible = false;
-      writeInitialView(Width, Height);
-      saveCursorPosition();
+
+      writeFrame(Width, Height); // TODO: do this outside of the constructor, somewhere
+      _savedCursorPos = Console.GetCursorPosition();
+
+      _keyPressMonitor = new KeyPressMonitor();
    }
 
 
    public void DrawView(View view) {
-      writeViewWithDirectPositioning(view.Chars);
+      writeCharArrayWithDirectPositioning(view.Chars);
+      writeAt(CaptionPosition, view.Caption);
+      writeAt(StatusPosition,  view.Status);
    }
 
 
-   private void saveCursorVisibility() {
-      _savedCursorVisibility = Console.CursorVisible;
+   public void StartMonitoringKeyboard(CancellationToken cancellationToken = default) {
+      _keyPressMonitor.Start(cancellationToken);
+   }
+
+
+   public void StopMonitoringKeyboard() {
+      _keyPressMonitor.StopSafe();
+   }
+
+
+   public void WireUpKeyPressEvents(AppEventSinks appEventSinks) {
+      _keyPressMonitor .KeyPressed += (_, args) => {
+                          Debug.WriteLine($"** keys: {args.KeyInfo.DisplayText()}"); // TODO: log to ILogger instead
+                          bool isHandled = appEventSinks.HandleAppKeyPress(args.KeyInfo.ToKeyPressInfo());
+                       };
    }
 
 
@@ -28,11 +59,6 @@ internal class ConsoleSurface(int Width, int Height) : IDisposable {
       Console.CursorVisible = _savedCursorVisibility;
    }
 
-   
-   private void saveCursorPosition() {
-      _savedCursorPos = Console.GetCursorPosition();
-   }
-   
 
    private void restoreCursorPosition() {
       Console.SetCursorPosition(_savedCursorPos.left,
@@ -40,17 +66,19 @@ internal class ConsoleSurface(int Width, int Height) : IDisposable {
    }
 
 
-   private static void  writeInitialView(int height, int width) {
+   private (int left, int top) CaptionPosition => (this.Width + 8, 1);
+   private (int left, int top) StatusPosition  => (this.Width + 8, Height);
+
+   private static void writeFrame(int height, int width) {
       Console.WriteLine();
-      Console.WriteLine   ("╔" + (new string('═', width)) + "╗");
-      for (int i = 0; i < height; ++i)
-         Console.WriteLine("║" + (new string(' ', width)) + "║");
-      Console.WriteLine   ("╚" + (new string('═', width)) + "╝");
+                                        Console.WriteLine("╔" + (new string('═', width)) + "╗ caption:");
+      for (int i = 0; i < height; ++i)  Console.WriteLine("║" + (new string(' ', width)) + "║");
+                                        Console.WriteLine("╚" + (new string('═', width)) + "╝ status:");
       Console.WriteLine();
    }
 
 
-   private static void writeViewWithDirectPositioning(char[,] view) {
+   private static void writeCharArrayWithDirectPositioning(char[,] view) {
       for (int r = 0; r <= view.GetUpperBound(0); ++r)
       for (int c = 0; c <= view.GetUpperBound(1); ++c) {
          writeAt((left: c, top: r),
@@ -59,11 +87,11 @@ internal class ConsoleSurface(int Width, int Height) : IDisposable {
    }
 
 
-   private static void writeAt((int left, int top) viewPos, char ch) {
+   private static void writeAt<T>((int left, int top) viewPos, T writeable) {
       (int left, int top) surfacePos = convertViewToSurfaceCoords(viewPos);
       Console.SetCursorPosition(surfacePos.left,
                                 surfacePos.top);
-      Console.Write(ch);
+      Console.Write(writeable);
    }
 
 
@@ -74,6 +102,8 @@ internal class ConsoleSurface(int Width, int Height) : IDisposable {
 
 
    public void Dispose() {
+      StopMonitoringKeyboard();
+      _keyPressMonitor.Dispose();
       restoreCursorPosition();
       restoreCursorVisibility();
    }
