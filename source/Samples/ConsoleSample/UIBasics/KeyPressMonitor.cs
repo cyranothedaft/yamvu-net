@@ -25,6 +25,7 @@ public class KeyPressMonitor : IDisposable {
 
 
    public void Start(CancellationToken? cancellationToken = null)
+         // TODO: first flush input buffer?
       => start(keyPressLoop, cancellationToken);
 
 

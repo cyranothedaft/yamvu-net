@@ -19,6 +19,6 @@
     <PackageVersion Include="Microsoft.Extensions.Logging.Abstractions" Version="9.0.3" />
     <PackageVersion Include="Microsoft.Extensions.Logging.Console" Version="9.0.2" />
     <PackageVersion Include="Microsoft.Extensions.Logging.Debug" Version="9.0.3" />
-    <PackageVersion Include="WelterKit" Version="0.0.1-beta" />
+    <PackageVersion Include="WelterKit" Version="0.0.2-beta" />
   </ItemGroup>
 </Project>

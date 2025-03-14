@@ -21,7 +21,7 @@ public class ProgramUpdate : IMvuProgramUpdatable<Model> {
 
 
    public (Model initialModel, IMvuCommand[] initialCommands) Init()
-      => ( new Model(Char: '-', Time: null),
+      => ( new Model(),
            [ ] );
 
 
@@ -31,9 +31,9 @@ public class ProgramUpdate : IMvuProgramUpdatable<Model> {
    public (Model newModel, IMvuCommand[] commands) Update(MvuCommandDispatchDelegate dispatch, Model currentModel, IMvuMessage message)
       => message switch
          {
-            Request_UpdateTimeMessage => Request_UpdateTimeMessage.Handle(dispatch, currentModel),
-            SetCharMessage msg => SetCharMessage.Handle(currentModel, msg.Char),
-            SetTimeMessage msg => SetTimeMessage.Handle(currentModel, msg.Time),
+            // Request_UpdateTimeMessage => Request_UpdateTimeMessage.Handle(dispatch, currentModel),
+            SetKeyCharMessage msg => SetKeyCharMessage.Handle(currentModel, msg.KeyChar),
+            // SetTimeMessage msg => SetTimeMessage.Handle(currentModel, msg.Time),
 
             // ignore all others - including Request_Quit
             _ => ProgramUpdateHelper.IgnoreMessage(Program.Info, currentModel, message, _logger)

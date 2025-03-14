@@ -3,6 +3,8 @@
 namespace ConsoleSample.Mvu;
 
 public record Model(
-      char Char,
-      DateTimeOffset? Time
-);
+      char? KeyChar
+      // DateTimeOffset? Time
+) {
+   public Model() : this(KeyChar: null) { }
+}

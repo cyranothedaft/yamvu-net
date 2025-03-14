@@ -13,34 +13,47 @@ internal static class EntryPoint {
       using ILoggerFactory loggerFactory = LoggerFactory.Create(builder => builder.AddDebug()
                                                                                   .SetMinimumLevel(minimumLogLevel));
 
-      using ConsoleSurface consoleSurface = new(10, 10);
-
-
       ILogger uiLogger = loggerFactory.CreateLogger("ui");
       ILogger appLogger = loggerFactory.CreateLogger("app");
 
+      using InputWatcher inputWatcher = new();
+
+      // multiple regimes of abstraction for user/application input events
+      // - "Application" events
+      //    - general events from input devices, such as key-press events
+      //    - the handler for these events should translate them to program-level events, then raise them in-turn
+      // - "Program" events
+      //    - specific events that are meaningful to the program itself, such as:
+      //      - QuitKeyPressed      (user pressed the Esc key)
+      //      - RefreshKeyPressed   (user pressed F5 to refresh the view)
+
       // define MVU program and wire up message loop
       ( _,
-        AppEventSinks appEventSinks,
-        ProgramEventSources programInputSources
+        AppEventSinks appEventSinks,            // <-- handlers for "Application" events; has been wired up to raise "Program" events (via the program event sources).
+                                                //     Important! - This still needs to be wired up to the emitter of the actual "Platform" events (inputWatcher, in this case)
+        ProgramEventSources programInputSources // <-- sources which raise "Program" events, which will be passed to the MVU program to be handled there
       ) = wireUpEvents(uiLogger);
-      consoleSurface.WireUpKeyPressEvents(appEventSinks);
+      inputWatcher.SetHandler(appEventSinks);
 
       AppMain<View> appMain = AppMain<View>.Build(programInputSources,
-                                                  (appLogger,
-                                                   loggerFactory.CreateLogger("svc"),
-                                                   loggerFactory.CreateLogger("run"),
-                                                   loggerFactory.CreateLogger("prg"),
-                                                   loggerFactory.CreateLogger("fx"),
-                                                   loggerFactory.CreateLogger("bus"))
+                                                  loggers: (appLogger,
+                                                            loggerFactory.CreateLogger("svc"),
+                                                            loggerFactory.CreateLogger("run"),
+                                                            loggerFactory.CreateLogger("prg"),
+                                                            loggerFactory.CreateLogger("fx"),
+                                                            loggerFactory.CreateLogger("bus"))
                                                  );
-
-      consoleSurface.StartMonitoringKeyboard();
 
       appLogger?.LogInformation("Started, running program to completion...");
       try {
-         consoleSurface.DrawView(ViewBuilder.BuildInitialView());
-         await appMain.RunProgramWithCommonBusAsync(replaceViewAction: consoleSurface.DrawView,
+         // start receiving input
+         inputWatcher.StartMonitoringKeyboard();
+
+         // emit initial view
+         ViewDisplayer.OutputView(ViewBuilder.BuildInitialView());
+
+         // run the program until it terminates
+         await appMain.RunProgramWithCommonBusAsync(replaceViewAction: ViewDisplayer.OutputView,
                                                     viewFunc: ViewBuilder.BuildFromModel);
 
          appLogger?.LogInformation("Program terminated normally - application will now end.");
@@ -75,10 +88,7 @@ internal static class EntryPoint {
       return (appEventSources, appEventSinks, programInputSources);
 
 
-      bool isQuitKey   (IKeyPressInfo keyPressInfo) => keyPressInfo.KeyData.KeyChar == 'Q';
-   
-      // bool isRefreshKey(IKeyPressInfo keyPressInfo) =>  keyPressInfo.KeyData.Key == ConsoleKey.F5. .HasFlag(Keys.F5)
-      //                                                           && !keyPressInfo.KeyData.HasFlag(Keys.Modifiers);
+      bool isQuitKey(IKeyPressInfo keyPressInfo) => keyPressInfo.KeyData.IsEscape();
    }
 
 

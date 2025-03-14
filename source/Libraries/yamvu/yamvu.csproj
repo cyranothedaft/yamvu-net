@@ -7,10 +7,6 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="WelterKit" />
-  </ItemGroup>
-
-  <ItemGroup>
     <ProjectReference Include="..\yamvu.core\yamvu.core.csproj" />
   </ItemGroup>
 
