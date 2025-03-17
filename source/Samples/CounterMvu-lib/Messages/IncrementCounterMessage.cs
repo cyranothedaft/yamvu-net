@@ -12,7 +12,7 @@ public static partial class MvuMessages {
 
 
 public record IncrementCounterMessage(int Increment) : Message {
-   public override string ToString() => $"IncrementCounter({Increment:O})".SurroundWith('$');
+   public override string ToString() => $"IncrementCounter({Increment})".SurroundWith('$');
 
 
    public static (Model, IMvuCommand[]) Handle(Model currentModel, int increment)

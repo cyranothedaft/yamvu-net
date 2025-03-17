@@ -1,9 +1,10 @@
-﻿using System.Collections.Generic;
-using ConsoleSampleMvu.Mvu;
-using ConsoleSampleMvu.Mvu.Messages;
+﻿using CounterMvu_lib;
+using CounterMvu_lib.Effects;
+using CounterMvu_lib.Messages;
+using CounterMvu_lib.Program;
+using CounterMvu;
 using Microsoft.Extensions.Logging;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using WelterKit.Testing;
 using yamvu.core.Primitives;
 using yamvu.Testing;
 
@@ -20,36 +21,91 @@ public sealed class Test_ProgramUpdate {
 
    [TestMethod]
    public void Init() {
-      MvuAssert.AreEqual((new Model(KeyChar: null), []),
-                         new ProgramUpdate(TestLogger).Init());
+      MvuAssert.UpdateResultsAreEqual((new Model(Counter: 0), []),
+                                      new ProgramUpdate(TestLogger).Init());
    }
 
 
    [TestMethod]
-   public void Update_FromNull_Request_QuitMessage() {
+   public void Update_Request_QuitMessage_FromInitial() {
       testUpdate(message          : MvuMessages.Request_Quit(),
-                 inputModel       : new Model(KeyChar: null),
-                 model_expected   : new Model(KeyChar: null),
+                 inputModel       : new Model(Counter: 0),
+                 model_expected   : new Model(Counter: 0),
                  commands_expected: [ ]);
    }
 
 
    [TestMethod]
-   public void Update_FromChar_Request_QuitMessage() {
+   public void Update_Request_QuitMessage_FromNumber() {
       testUpdate(message          : MvuMessages.Request_Quit(),
-                 inputModel       : new Model(KeyChar: 'A'),
-                 model_expected   : new Model(KeyChar: 'A'),
+                 inputModel       : new Model(Counter: 42),
+                 model_expected   : new Model(Counter: 42),
                  commands_expected: [ ]);
    }
 
 
+   [TestMethod]
+   public void Update_IncrementCounter_FromInitial() {
+      testUpdate(message          : MvuMessages.IncrementCounter(42),
+                 inputModel       : new Model(Counter:  0),
+                 model_expected   : new Model(Counter: 42),
+                 commands_expected: [ ]);
+   }
 
-   private static void testUpdate(Message message, Model inputModel, Model model_expected, IEnumerable<IMvuCommand> commands_expected) {
-      (Model model_actual, IMvuCommand[] commands_actual) = new ProgramUpdate(TestLogger)
-                                                            .Update(NullDispatcher, inputModel, message);
-      Assert.AreEqual(model_expected, model_actual, "Model");
-      SequenceAssert.AreEqual(commands_expected, commands_actual,
-                              assertAreEqualAction: Assert.AreEqual, "Commands");
+
+   [TestMethod]
+   public void Update_IncrementCounter_FromNumber() {
+      testUpdate(message          : MvuMessages.IncrementCounter(42),
+                 inputModel       : new Model(Counter: 100),
+                 model_expected   : new Model(Counter: 142),
+                 commands_expected: [ ]);
+   }
+
+
+   [TestMethod]
+   public void Update_Request_Increment1_FromInitial() {
+      testUpdate(message          : MvuMessages.Request_Increment1(),
+                 inputModel       : new Model(Counter: 0),
+                 model_expected   : new Model(Counter: 0),
+                 commands_expected: [ MvuMessages.IncrementCounter(1).AsCommand() ]);
+   }
+
+
+   [TestMethod]
+   public void Update_Request_Increment1_FromNumber() {
+      testUpdate(message          : MvuMessages.Request_Increment1(),
+                 inputModel       : new Model(Counter: 0),
+                 model_expected   : new Model(Counter: 0),
+                 commands_expected: [ MvuMessages.IncrementCounter(1).AsCommand() ]);
+   }
+
+
+   [TestMethod]
+   public void Update_Request_IncrementRandom_FromInitial() {
+      testUpdate(message          : MvuMessages.Request_IncrementRandom(),
+                 inputModel       : new Model(Counter: 0),
+                 model_expected   : new Model(Counter: 0),
+                 commands_expected: [ new GenerateRandomNumberEffect().AsCommandWithResultHandler((int _) => { }) ]);
+   }
+
+
+   [TestMethod]
+   public void Update_Request_IncrementRandom_FromNumber() {
+      testUpdate(message          : MvuMessages.Request_IncrementRandom(),
+                 inputModel       : new Model(Counter: 100),
+                 model_expected   : new Model(Counter: 100),
+                 commands_expected: [ new GenerateRandomNumberEffect().AsCommandWithResultHandler((int _) => { }) ]);
+   }
+
+
+
+   private static void testUpdate(Message message, Model inputModel, Model model_expected, IMvuCommand[] commands_expected) {
+      // ARRANGE, ACT
+      var actualResult = new ProgramUpdate(TestLogger)
+                         .Update(NullDispatcher, inputModel, message);
+
+      // ASSERT
+      MvuAssert.UpdateResultsAreEqual((model_expected, commands_expected), actualResult);
    }
 
 }

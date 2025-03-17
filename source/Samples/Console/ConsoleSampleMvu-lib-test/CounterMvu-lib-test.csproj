@@ -8,7 +8,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\..\Libraries\yamvu.Testing\yamvu.Testing.csproj" />
-    <ProjectReference Include="..\..\ConsoleSampleMvu-lib\ConsoleSampleMvu-lib.csproj" />
+    <ProjectReference Include="..\..\CounterMvu-lib\CounterMvu-lib.csproj" />
   </ItemGroup>
 
   <ItemGroup>

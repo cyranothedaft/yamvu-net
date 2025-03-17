@@ -18,6 +18,6 @@ public record Request_Increment1Message() : Message {
 
    public static (Model, IMvuCommand[]) Handle(MvuCommandDispatchDelegate dispatch, Model currentModel)
       => (currentModel,
-          [ MvuMessages.Request_Increment1().AsCommand() ]
+          [ MvuMessages.IncrementCounter(1).AsCommand() ]
          );
 }

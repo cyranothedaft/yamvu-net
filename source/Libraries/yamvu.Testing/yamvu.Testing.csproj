@@ -8,4 +8,8 @@
     <PackageReference Include="WelterKit.Testing" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\yamvu.core\yamvu.core.csproj" />
+  </ItemGroup>
+
 </Project>
