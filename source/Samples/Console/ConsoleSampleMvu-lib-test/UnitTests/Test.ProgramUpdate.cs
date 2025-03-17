@@ -9,7 +9,7 @@ using yamvu.Testing;
 
 
 
-namespace ConsoleSampleMvu_lib_test.UnitTests;
+namespace CounterMvu_lib_test.UnitTests;
 
 [TestClass]
 public sealed class Test_ProgramUpdate {

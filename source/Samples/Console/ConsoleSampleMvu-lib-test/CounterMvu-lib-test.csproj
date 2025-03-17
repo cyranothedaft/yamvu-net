@@ -2,7 +2,7 @@
 
   <PropertyGroup>
     <TargetFramework>net8.0</TargetFramework>
-    <RootNamespace>ConsoleSampleMvu_lib_test</RootNamespace>
+    <RootNamespace>CounterMvu_lib_test</RootNamespace>
     <UseVSTest>true</UseVSTest>
   </PropertyGroup>
 
