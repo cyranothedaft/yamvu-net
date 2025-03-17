@@ -14,7 +14,7 @@ public record SetKeyCharMessage(char KeyChar) : Message {
              {
                 KeyChar = keyChar,
              },
-             []
+          []
          );
 }
 
