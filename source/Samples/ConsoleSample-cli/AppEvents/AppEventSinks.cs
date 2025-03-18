@@ -20,7 +20,7 @@ internal class AppEventSinks : IAppEventSink_KeyPressed {
 
    /// <inheritdoc />
    public bool HandleAppKeyPress(IKeyPressInfo keyPressInfo) {
-      _uiLogger?.LogTrace("App Event - KeyPressed - handling:  {key}", keyPressInfo.KeyData.DisplayText());
+      _uiLogger?.LogTrace("App Event - KeyPressed - handling:  {key}", keyPressInfo.KeyData.GetDisplayText());
       return _handleAppKeyPressed(keyPressInfo);
    }
 }

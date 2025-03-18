@@ -19,7 +19,7 @@ internal class AppEventSources : IAppEventSource_KeyPressed {
 
    /// <inheritdoc />
    public bool RaiseAppKeyPressed(IKeyPressInfo keyPressInfo) {
-      _uiLogger?.LogTrace("App Event - KeyPressed - raising:   {key}", keyPressInfo.KeyData.DisplayText());
+      _uiLogger?.LogTrace("App Event - KeyPressed - raising:   {key}", keyPressInfo.KeyData.GetDisplayText());
       return AppKeyPressed?.Invoke(keyPressInfo) ?? false;
    }
 }

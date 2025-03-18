@@ -15,7 +15,7 @@ internal class InputWatcher : IDisposable {
    public InputWatcher(ILogger? logger = null) {
       _logger = logger;
       hideCursor();
-      _keyPressMonitor = new KeyPressMonitor(isDebugging: true, logger);
+      _keyPressMonitor = new KeyPressMonitor(debounce: true, isDebugging: true, logger);
    }
 
 
@@ -38,9 +38,9 @@ internal class InputWatcher : IDisposable {
 
    public void SetHandler(IAppEventSink_KeyPressed appKeyPressedEventSink) {
       _keyPressMonitor.KeyPressed += (_, args) => {
-                                        _logger?.LogTrace("[platform] --> [app]  :KeyPress: {appKeyInfo}", args.KeyInfo.DisplayText());
+                                        _logger?.LogTrace("[platform] --> [app]  :KeyPress: {appKeyInfo}", args.KeyInfo.GetDisplayText());
                                         bool isHandled = appKeyPressedEventSink.HandleAppKeyPress(args.KeyInfo.ToKeyPressInfo());
-                                        _logger?.LogTrace("[platform] --> [app]  :KeyPress: {appKeyInfo} - {handledOrNot}", args.KeyInfo.DisplayText(), isHandled ? "handled" : "not handled");
+                                        _logger?.LogTrace("[platform] --> [app]  :KeyPress: {appKeyInfo} - {handledOrNot}", args.KeyInfo.GetDisplayText(), isHandled ? "handled" : "not handled");
                                      };
    }
 

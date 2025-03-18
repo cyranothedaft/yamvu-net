@@ -1,5 +1,6 @@
 ﻿using System;
 using ConsoleSample.UIBasics;
+using ConsoleSample.View;
 using ConsoleSample.ViewPlatform;
 using ConsoleSampleMvu.AppCore;
 using Microsoft.Extensions.Logging;
@@ -25,27 +26,17 @@ internal static class EntryPoint {
 
       ProgramEventSources programInputSources = new(inpLogger);
 
-      bool handleKeyPressAndRaiseProgramEvent(IKeyPressInfo keyPressed) {
-         if (isQuitKey(keyPressed)) {
-            ((IProgramEventSource_QuitButtonPressed)programInputSources).RaiseQuitButtonPressed();
-            return true; // handled
-         }
-
-         // else if (isRefreshKey(args)) {
-         //    ((IProgramEventSource_RefreshButtonPressed)programInputSources).RaiseRefreshButtonPressed();
-         //    return true; // handled
-         // }
-         return false; // not handled
-
-         bool isQuitKey(IKeyPressInfo keyPressInfo) => keyPressInfo.KeyData.IsEscape();
-      }
+      bool handleKeyPressAndRaiseProgramEvent(IKeyPressInfo keyPressed)
+         => ProgramKeyDispatcher.Handle(programInputSources, keyPressed);
 
 
       // establish the "view platform": essentially the state that is common to (and thus shared by) all views;
       //   this handles all user input and output (keyboard, display, etc.)
       using var viewPlatform = new ScrollingConsoleViewPlatform(handleKeyPressAndRaiseProgramEvent, inpLogger, uiLogger);
 
-      AppMain<View> appMain = AppMain<View>.Build(programInputSources,
+      // awkward...
+      //          ↓
+      AppMain<View.View> appMain = AppMain<View.View>.Build(programInputSources,
                                                   loggers: (appLogger, svcLogger, runLogger, prgLogger, fxLogger, busLogger));
 
       appLogger?.LogInformation("Started, running program to completion...");
@@ -67,19 +58,4 @@ internal static class EntryPoint {
          await Console.Error.WriteLineAsync(exception.ToString());
       }
    }
-
-
-
-
-   // private static void quitApplication(Form mainForm) {
-   //    mainForm.Close();
-   // }
-
-
-   // private static void displayNewView(MainForm form, View newView) {
-   //    form.Controls.Clear();
-   //    form.Controls.AddRange(newView.Controls);
-   //    form.Invalidate();
-   //    form.Controls[0].Focus();
-   // }
 }

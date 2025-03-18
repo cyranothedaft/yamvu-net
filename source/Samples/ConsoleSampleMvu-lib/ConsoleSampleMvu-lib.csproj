@@ -12,6 +12,7 @@
   <ItemGroup>
     <ProjectReference Include="..\..\Libraries\yamvu.core\yamvu.core.csproj" />
     <ProjectReference Include="..\..\Libraries\yamvu\yamvu.csproj" />
+    <ProjectReference Include="..\CounterMvu-lib\CounterMvu-lib.csproj" />
   </ItemGroup>
 
 </Project>

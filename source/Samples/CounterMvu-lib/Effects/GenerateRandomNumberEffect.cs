@@ -8,12 +8,21 @@ using yamvu.core.Primitives;
 
 namespace CounterMvu_lib.Effects;
 
+
 using ResultType = int;
 
 
 public partial interface IEffects {
    ValueTask<ResultType> GenerateRandomNumberAsync();
 }
+
+
+
+public static partial class MvuEffects {
+   public static IMvuEffectCommand GenerateRandomNumber(EffectResultCallbackDelegate<ResultType> handleResult)
+      => new GenerateRandomNumberEffect().AsCommandWithResultHandler(handleResult);
+}
+
 
 
 public record GenerateRandomNumberEffect() : IMvuEffect {
@@ -28,10 +37,4 @@ public record GenerateRandomNumberEffect() : IMvuEffect {
       else
          throw new Exception($"Effect {effect} has wrong handler type: [{resultHandler}]");
    }
-}
-
-
-public static partial class MvuEffects {
-   public static IMvuEffectCommand GenerateRandomNumber(EffectResultCallbackDelegate<ResultType> handleResult)
-      => new GenerateRandomNumberEffect().AsCommandWithResultHandler(handleResult);
 }

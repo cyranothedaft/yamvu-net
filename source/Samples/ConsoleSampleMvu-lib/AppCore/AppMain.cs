@@ -2,12 +2,14 @@
 using System.Threading;
 using System.Threading.Tasks;
 using ConsoleSampleMvu.AppCore.Services;
-using ConsoleSampleMvu.Mvu;
-using ConsoleSampleMvu.Mvu.Effects;
+using CounterMvu_lib;
+using CounterMvu_lib.Effects;
+using CounterMvu_lib.Messages;
 using Microsoft.Extensions.Logging;
 using yamvu.core;
 using yamvu.core.Primitives;
 using yamvu.Runners;
+using CounterProgram = CounterMvu_lib.Program.Program;
 
 
 namespace ConsoleSampleMvu.AppCore;
@@ -34,11 +36,11 @@ public class AppMain<TView> {
 
    private static IAppServices buildServices(ILogger? servicesLogger)
          // => new FakeAppServices(servicesLogger);
-         => new AppServices(servicesLogger);
+         => new AppServices_Real(servicesLogger);
 
 
    private static IMvuProgramRunner<TView> buildProgramRunner(ILogger? programRunnerLogger)
-         => new ProgramRunner2<IConsoleSampleMvuCommand, TView>(programRunnerLogger);
+         => new ProgramRunner2<ICounterMvuCommand, TView>(programRunnerLogger);
 
 
    private readonly IAppServices _services;
@@ -80,10 +82,10 @@ public class AppMain<TView> {
                                                           ProgramEventSources programEventSources,
                                                           ViewFuncDelegate<TView> viewFunc,
                                                           (ILogger? ui, ILogger? program, ILogger? effect, ILogger? bus, ILogger? programRunner) loggers) {
-      ProgramInfo programInfo = Program.Info;
-      IMvuProgram2<Model, TView> program = Program.Build(viewFunc: (dispatch, model) => viewFunc(dispatch, model, 
-                                                                                                 programEventSources, 
-                                                                                                 loggers.ui),
+      ProgramInfo programInfo = CounterProgram.Info;
+      IMvuProgram2<Model, TView> program = CounterProgram.Build(viewFunc: (dispatch, model) => viewFunc(dispatch, model, 
+                                                                                                        programEventSources, 
+                                                                                                        loggers.ui),
                                                          loggers.program);
 
       CancellationToken busCancellationToken     = new();
@@ -94,7 +96,7 @@ public class AppMain<TView> {
       void executeTheEffect(IMvuEffect effect, IHasEffectResultHandler resultHandler) => executeEffect(effectExecutor, effect, resultHandler, loggers.effect);
 
       Model finalModel = await ProgramRunner2<IMvuCommand, TView>.RunWithBusAsync(program, programInfo, programRunner, MessageExtensions.AsCommand, executeTheEffect,
-                                                                                  isQuitMessage: msg => msg is Mvu.Messages.Request_QuitMessage,
+                                                                                  isQuitMessage: msg => msg is Request_QuitMessage,
                                                                                   busCancellationToken, programCancellationToken,
                                                                                   busLogger: loggers.bus,
                                                                                   programRunnerLogger: loggers.programRunner);

@@ -1,7 +1,7 @@
 using System;
 using System.Threading.Tasks;
 using ConsoleSampleMvu.AppCore.Services;
-using ConsoleSampleMvu.Mvu.Effects;
+using CounterMvu_lib.Effects;
 
 
 
@@ -15,9 +15,9 @@ internal class EffectExecutor : IEffects {
    }
 
 
-   public async ValueTask<DateTimeOffset> RetrieveCurrentTimeAsync() {
+   public async ValueTask<int> GenerateRandomNumberAsync() {
       // not really async
       await Task.CompletedTask;
-      return _services.GetCurrentTime_utc();
+      return _services.GenerateRandomNumber();
    }
 }

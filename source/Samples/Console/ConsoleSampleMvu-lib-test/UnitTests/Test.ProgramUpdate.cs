@@ -16,7 +16,6 @@ namespace CounterMvu_lib_test.UnitTests;
 public sealed class Test_ProgramUpdate {
 
    private static readonly ILogger TestLogger = new LoggerForTesting();
-   private static void NullDispatcher(IMvuCommand command) { }
 
 
    [TestMethod]
@@ -106,6 +105,9 @@ public sealed class Test_ProgramUpdate {
 
       // ASSERT
       MvuAssert.UpdateResultsAreEqual((model_expected, commands_expected), actualResult);
+
+
+      static void NullDispatcher(IMvuCommand command) { }
    }
 
 }
