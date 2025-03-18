@@ -2,7 +2,7 @@
 using ConsoleSample.UIBasics;
 using ConsoleSample.View;
 using ConsoleSample.ViewPlatform;
-using ConsoleSampleMvu.AppCore;
+using CounterSample.AppCore;
 using Microsoft.Extensions.Logging;
 
 

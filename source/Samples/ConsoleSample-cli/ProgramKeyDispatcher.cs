@@ -1,6 +1,7 @@
 ﻿using System;
 using ConsoleSample.UIBasics;
-using ConsoleSampleMvu.AppCore;
+using CounterSample.AppCore;
+
 
 
 namespace ConsoleSample;

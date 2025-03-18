@@ -2,7 +2,7 @@ using System;
 using Microsoft.Extensions.Logging;
 
 
-namespace ConsoleSampleMvu.AppCore.Services;
+namespace CounterSample.AppCore.Services;
 
 internal class AppServices_Real : IAppServices {
    private static readonly Random _rng = new Random(); // seeds with datetime ticks by default

@@ -2,7 +2,7 @@
 using Microsoft.Extensions.Logging;
 
 
-namespace ConsoleSampleMvu.AppCore;
+namespace CounterSample.AppCore;
 
 // ??? we need a more direct mechanism for the view to define handlers for user input events.
 // ??? we don't want to subscribe/unsubscribe each time a new (immutable!) view is instantiated/destroyed

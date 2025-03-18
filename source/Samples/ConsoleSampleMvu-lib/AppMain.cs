@@ -1,10 +1,10 @@
 ﻿using System;
 using System.Threading;
 using System.Threading.Tasks;
-using ConsoleSampleMvu.AppCore.Services;
 using CounterMvu_lib;
 using CounterMvu_lib.Effects;
 using CounterMvu_lib.Messages;
+using CounterSample.AppCore.Services;
 using Microsoft.Extensions.Logging;
 using yamvu.core;
 using yamvu.core.Primitives;
@@ -12,7 +12,7 @@ using yamvu.Runners;
 using CounterProgram = CounterMvu_lib.Program.Program;
 
 
-namespace ConsoleSampleMvu.AppCore;
+namespace CounterSample.AppCore;
 
 
 public delegate TView ViewFuncDelegate<out TView>(MvuMessageDispatchDelegate dispatch, Model model,
