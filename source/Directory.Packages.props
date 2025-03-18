@@ -1,0 +1,25 @@
+<Project ToolsVersion="15.0">
+  <PropertyGroup>
+    <ManagePackageVersionsCentrally>true</ManagePackageVersionsCentrally>
+  </PropertyGroup>
+  <ItemGroup>
+    <!-- <PackageVersion Include="deftware.util6" Version="3.10.10-develop202406160452" />
+    <PackageVersion Include="deftware.win32net" Version="0.2.1-20240712220825" />
+    <PackageVersion Include="Microsoft.Extensions.Logging.Abstractions" Version="8.0.0" />
+    <PackageVersion Include="Microsoft.Extensions.Logging.Debug" Version="8.0.0" />
+    <PackageVersion Include="Microsoft.Graphics.Win2D" Version="1.2.0" />
+    <PackageVersion Include="Microsoft.Windows.SDK.BuildTools" Version="10.0.22621.756" />
+    <PackageVersion Include="Microsoft.WindowsAppSDK" Version="1.5.240607001" />
+    <PackageVersion Include="Spectre.Console" Version="0.49.1" />
+    <PackageVersion Include="Terminal.Gui" Version="2.0.0-pre.949" />
+    <PackageVersion Include="yamvu-core" Version="0.2.1-alpha" />
+    <PackageVersion Include="yamvu" Version="0.2.1-alpha" /> -->
+  </ItemGroup>
+  <ItemGroup>
+    <PackageVersion Include="Microsoft.Extensions.Logging.Abstractions" Version="9.0.3" />
+    <PackageVersion Include="Microsoft.Extensions.Logging.Console" Version="9.0.2" />
+    <PackageVersion Include="Microsoft.Extensions.Logging.Debug" Version="9.0.3" />
+    <PackageVersion Include="WelterKit" Version="0.0.2-beta" />
+    <PackageVersion Include="WelterKit.Testing" Version="0.0.2-beta" />
+  </ItemGroup>
+</Project>

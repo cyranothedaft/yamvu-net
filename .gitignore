@@ -1,1 +1,4 @@
+*.user
 .vs
+obj/
+bin/

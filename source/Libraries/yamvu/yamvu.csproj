@@ -1,0 +1,13 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+     <AssemblyName>yamvu</AssemblyName>
+     <RootNamespace>yamvu</RootNamespace>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\yamvu.core\yamvu.core.csproj" />
+  </ItemGroup>
+
+</Project>
