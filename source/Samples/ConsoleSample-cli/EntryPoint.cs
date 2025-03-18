@@ -26,7 +26,7 @@ internal static class EntryPoint {
 
       ProgramEventSources programInputSources = new(inpLogger);
 
-      ViewInputBindings programInputBindings = new(); // thread-safe table of delegates to call (which will be updated for each View) when keys are pressed (instead of going through event subscription/unsubscription for each View instance)
+      MutableViewInputBindings programInputBindings = new(); // thread-safe table of delegates to call (which will be updated for each View) when keys are pressed (instead of going through event subscription/unsubscription for each View instance)
       programInputSources.QuitButtonPressed            += () => programInputBindings.QuitButtonPressed           ?.Invoke();
       programInputSources.Increment1ButtonPressed      += () => programInputBindings.Increment1ButtonPressed     ?.Invoke(); 
       programInputSources.IncrementRandomButtonPressed += () => programInputBindings.IncrementRandomButtonPressed?.Invoke();
