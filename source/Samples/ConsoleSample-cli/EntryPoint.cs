@@ -40,12 +40,13 @@ internal static class EntryPoint {
       bool handleAppKeyPressAndRaiseProgramKeyEvent(IKeyPressInfo keyPressed)
          => ProgramKeyDispatcher.Handle(programInputSources, keyPressed);
 
+
       // establish the "view platform": essentially the state that is common to (and thus shared by) all views;
       //   this handles all user input and output (keyboard, display, etc.)
       using var viewPlatform = new ScrollingConsoleViewPlatform(handleAppKeyPressAndRaiseProgramKeyEvent, inpLogger, uiLogger);
 
-      AppMain<PlatformView<MvuView>> appMain = AppMain<PlatformView<MvuView>>.Build(programInputSources,
-                                                        loggers: (appLogger, svcLogger, runLogger, prgLogger, fxLogger, busLogger));
+      AppMain<PlatformView<MvuView>> appMain = AppMain<PlatformView<MvuView>>.Build(//programInputSources,
+                                                                                    loggers: (appLogger, svcLogger, runLogger, prgLogger, fxLogger, busLogger));
 
       appLogger?.LogInformation("Started, running program to completion...");
       try {

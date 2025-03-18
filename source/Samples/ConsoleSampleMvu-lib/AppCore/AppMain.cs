@@ -16,15 +16,15 @@ namespace ConsoleSampleMvu.AppCore;
 
 
 public delegate TView ViewFuncDelegate<out TView>(MvuMessageDispatchDelegate dispatch, Model model,
-                                                  ProgramEventSources programEventSources,
+                                                  //(input bindings are handled differently now) ProgramEventSources programEventSources,
                                                   ILogger? uiLogger);
 
 public class AppMain<TView> {
-   public static AppMain<TView> Build(ProgramEventSources programEventSources,
+   public static AppMain<TView> Build(// ProgramEventSources programEventSources,
                                       (ILogger? app, ILogger? service, ILogger? programRunner, ILogger? program, ILogger? effect, ILogger? bus) loggers)
       => new (buildServices(loggers.service),
               buildProgramRunner(loggers.programRunner),
-              programEventSources,
+              // programEventSources,
               (loggers.app,
                loggers.service,
                loggers.program,
@@ -45,17 +45,17 @@ public class AppMain<TView> {
 
    private readonly IAppServices _services;
    private readonly IMvuProgramRunner<TView> _programRunner;
-   private readonly ProgramEventSources _programEventSources;
+   // private readonly ProgramEventSources _programEventSources;
    private readonly (ILogger? app, ILogger? ui, ILogger? program, ILogger? effect, ILogger? bus, ILogger? programRunner) _loggers;
 
 
    public AppMain(IAppServices services,
                   IMvuProgramRunner<TView> programRunner,
-                  ProgramEventSources programEventSources,
+                  // ProgramEventSources programEventSources,
                   (ILogger? app, ILogger? services, ILogger? program, ILogger? effect, ILogger? bus, ILogger? programRunner) loggers) {
       _services            = services;
       _programRunner       = programRunner;
-      _programEventSources = programEventSources;
+      // _programEventSources = programEventSources;
       _loggers             = loggers;
    }
 
@@ -67,7 +67,7 @@ public class AppMain<TView> {
       _loggers.app?.LogDebug("Attached to runner");
 
       await runProgramWithCommonBusAsync(_services, _programRunner, 
-                                         _programEventSources, 
+                                         // _programEventSources, 
                                          viewFunc,
                                          (_loggers.ui,
                                           _loggers.program,
@@ -79,12 +79,12 @@ public class AppMain<TView> {
 
    private static async Task runProgramWithCommonBusAsync(IAppServices services,
                                                           IMvuProgramRunner<TView> programRunner,
-                                                          ProgramEventSources programEventSources,
+                                                          // ProgramEventSources programEventSources,
                                                           ViewFuncDelegate<TView> viewFunc,
                                                           (ILogger? ui, ILogger? program, ILogger? effect, ILogger? bus, ILogger? programRunner) loggers) {
       ProgramInfo programInfo = CounterProgram.Info;
       IMvuProgram2<Model, TView> program = CounterProgram.Build(viewFunc: (dispatch, model) => viewFunc(dispatch, model, 
-                                                                                                        programEventSources, 
+                                                                                                        // programEventSources, 
                                                                                                         loggers.ui),
                                                          loggers.program);
 

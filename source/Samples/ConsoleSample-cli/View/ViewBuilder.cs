@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Collections.Immutable;
-using ConsoleSampleMvu.AppCore;
 using CounterMvu_lib;
 using CounterMvu_lib.Messages;
 using Microsoft.Extensions.Logging;
@@ -23,19 +22,11 @@ internal class ViewBuilder {
 
 
    // because of how many UI platforms work, the visual part of the view is coupled with the input-event handling part
-   // to support that: here, they can be defined together or separately.
-   // for this app, we're defining them separately (since the input and output of the console are also defined separately)
-   //
-   // all input/platform/app events that should become MVU messages must ultimately get handled here, since this is where the dispatch function is available
+   // to support that: the 'view' that's created has two components: (1) the view itself (the raw data for rendering the view),
+   // and (2) a table of input bindings (definitions of what happens when user input occurs).
    // 
 
-   public static PlatformView<MvuView> BuildViewFromModel(MvuMessageDispatchDelegate dispatch, Model model,
-                                     ProgramEventSources eventSources, // <-- provided by the "view platform" and pre-translated into "program" events;
-                                                                       //     on some ui platforms these events will originate from the view instance itself,
-                                                                       //     That's not the case for this console app, so we can handle them in a separate layer
-                                                                       //     and keep the view definition as clean as possible
-                                     ILogger? uilogger) {
-
+   public static PlatformView<MvuView> BuildViewFromModel(MvuMessageDispatchDelegate dispatch, Model model, ILogger? uilogger) {
       MvuView mvuView = buildMvuViewFromModel(model, uilogger);
       ViewInputBindings inputBindings = new (() => dispatch(MvuMessages.Request_Quit()           ),
                                              () => dispatch(MvuMessages.Request_Increment1()     ),
