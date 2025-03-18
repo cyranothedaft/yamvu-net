@@ -26,18 +26,26 @@ internal static class EntryPoint {
 
       ProgramEventSources programInputSources = new(inpLogger);
 
-      bool handleKeyPressAndRaiseProgramEvent(IKeyPressInfo keyPressed)
-         => ProgramKeyDispatcher.Handle(programInputSources, keyPressed);
+      ViewInputBindings programInputBindings = new(); // thread-safe table of delegates to call (which will be updated for each View) when keys are pressed (instead of going through event subscription/unsubscription for each View instance)
+      programInputSources.QuitButtonPressed            += () => programInputBindings.QuitButtonPressed           ?.Invoke();
+      programInputSources.Increment1ButtonPressed      += () => programInputBindings.Increment1ButtonPressed     ?.Invoke(); 
+      programInputSources.IncrementRandomButtonPressed += () => programInputBindings.IncrementRandomButtonPressed?.Invoke();
 
+      void updateBindings(ViewInputBindings newBindings) {
+         programInputBindings.QuitButtonPressed            = newBindings.QuitButtonPressed;
+         programInputBindings.Increment1ButtonPressed      = newBindings.Increment1ButtonPressed;
+         programInputBindings.IncrementRandomButtonPressed = newBindings.IncrementRandomButtonPressed;
+      }
+
+      bool handleAppKeyPressAndRaiseProgramKeyEvent(IKeyPressInfo keyPressed)
+         => ProgramKeyDispatcher.Handle(programInputSources, keyPressed);
 
       // establish the "view platform": essentially the state that is common to (and thus shared by) all views;
       //   this handles all user input and output (keyboard, display, etc.)
-      using var viewPlatform = new ScrollingConsoleViewPlatform(handleKeyPressAndRaiseProgramEvent, inpLogger, uiLogger);
+      using var viewPlatform = new ScrollingConsoleViewPlatform(handleAppKeyPressAndRaiseProgramKeyEvent, inpLogger, uiLogger);
 
-      // awkward...
-      //          ↓
-      AppMain<View.View> appMain = AppMain<View.View>.Build(programInputSources,
-                                                  loggers: (appLogger, svcLogger, runLogger, prgLogger, fxLogger, busLogger));
+      AppMain<PlatformView<MvuView>> appMain = AppMain<PlatformView<MvuView>>.Build(programInputSources,
+                                                        loggers: (appLogger, svcLogger, runLogger, prgLogger, fxLogger, busLogger));
 
       appLogger?.LogInformation("Started, running program to completion...");
       try {
@@ -45,11 +53,11 @@ internal static class EntryPoint {
          viewPlatform.StartMonitoringKeyboard();
 
          // emit initial view
-         ViewDisplayer.OutputView(ViewBuilder.BuildInitialView());
+         ViewRenderer.DisplayView(ViewBuilder.BuildInitialView(), updateBindings);
 
          // run the program until it terminates
-         await appMain.RunProgramWithCommonBusAsync(replaceViewAction: ViewDisplayer.OutputView,
-                                                    viewFunc: ViewBuilder.BuildFromModel);
+         await appMain.RunProgramWithCommonBusAsync(replaceViewAction: platformView => ViewRenderer.DisplayView(platformView, updateBindings),
+                                                    viewFunc: ViewBuilder.BuildViewFromModel);
 
          appLogger?.LogInformation("Program terminated normally - application will now end.");
       }

@@ -16,7 +16,7 @@ internal class AppServices_Real : IAppServices {
 
 
    public int GenerateRandomNumber() {
-      int number = _rng.Next();
+      int number = _rng.Next(minValue: 2, maxValue: 999);
       _serviceLogger?.LogDebug("Generated random number: {number}", number);
       return number;
    }

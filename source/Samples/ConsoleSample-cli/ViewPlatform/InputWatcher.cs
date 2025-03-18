@@ -15,7 +15,9 @@ internal class InputWatcher : IDisposable {
    public InputWatcher(ILogger? logger = null) {
       _logger = logger;
       hideCursor();
-      _keyPressMonitor = new KeyPressMonitor(debounce: true, isDebugging: true, logger);
+      _keyPressMonitor = new KeyPressMonitor(
+                                             // debounce: true, 
+                                             isDebugging: true, logger);
    }
 
 

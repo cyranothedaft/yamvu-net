@@ -1,6 +1,7 @@
 ﻿using System;
 using ConsoleSample.AppEvents;
 using ConsoleSample.UIBasics;
+using ConsoleSample.View;
 using Microsoft.Extensions.Logging;
 using ViewPlatform;
 
