@@ -27,7 +27,7 @@ internal class MvuPlatformProgram {
    public async Task StartAsync() {
       ProgramRunnerWithServices<PlatformView<ProgramView>> programRunnerWithServices = ProgramRunnerWithServices<PlatformView<ProgramView>>.Build( //programInputSources,
                                                                                                                                                   loggers: (null, null, null, null, null, null));
-
+      
       // run the program until it terminates
       await programRunnerWithServices.RunProgramWithCommonBusAsync(replaceViewAction: platformView => {
                                                                                          ViewEmitted?.Invoke(platformView.MvuView);

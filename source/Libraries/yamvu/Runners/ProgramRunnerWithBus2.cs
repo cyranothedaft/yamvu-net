@@ -126,6 +126,7 @@ public class ProgramRunner2<TCmd, TView> : IMvuProgramRunner<TView> where TCmd :
    private delegate Task<TModel> RunLoopAsyncDelegate<TModel>(Action<IMvuCommand> dispatchCommandAction);
 
 
+
    public Task<TModel> RunProgramAsync2<TModel>(IPublisher<IMvuCommand> commonBusPublisher,
                                                 IBusWriter<IMvuCommand> commonBusWriter,
                                                 IMvuProgram2<TModel, TView> program,
@@ -136,19 +137,19 @@ public class ProgramRunner2<TCmd, TView> : IMvuProgramRunner<TView> where TCmd :
                                                 Func<TView, bool>? queryTerminationAndSimulateInput = null,
                                                 IMvuCommand[]? initialCommands = null,
                                                 CancellationToken cancellationToken = default)
-    // where TEff : IMvuEffect
-   // where TEff : IActionableEffectBase
+         // where TEff : IMvuEffect
+         // where TEff : IActionableEffectBase
    {
 
-   ILogger? programLogger = _programRunnerLogger?.WithPrefix($"[run program {programInfo.Name}] ");
-   Func<Task<TModel>> wrapped = ((Func<Task<TModel>>)(() => runProgramLoopAsync(dispatchCommand)))
-                               .wrapWithCommonBusLink2<TModel, TCmd>(commonBusPublisher, handleCommand)
-                               .wrapWithLogs2(programLogger);
-         return wrapped();
+      ILogger? programLogger = _programRunnerLogger?.WithPrefix($"[run program {programInfo.Name}] ");
+      Func<Task<TModel>> wrapped = ((Func<Task<TModel>>)(() => runProgramLoopAsync(dispatchCommand)))
+                                  .wrapWithCommonBusLink2<TModel, TCmd>(commonBusPublisher, handleCommand)
+                                  .wrapWithLogs2(programLogger);
+      return wrapped();
 
       void dispatchCommand(IMvuCommand command) => dispatchCommandToCommonBus(commonBusWriter, _programRunnerLogger, command);
-      void handleCommand  (TCmd        command) => handleCommandFromCommonBus(_programCommandChannel.Writer, _programRunnerLogger, command);
-      void emitView       (TView view, bool isInitialView) => ViewEmitted?.Invoke(view, isInitialView);
+      void handleCommand(TCmd command) => handleCommandFromCommonBus(_programCommandChannel.Writer, _programRunnerLogger, command);
+      void emitView(TView view, bool isInitialView) => ViewEmitted?.Invoke(view, isInitialView);
 
       Task<TModel> runProgramLoopAsync(Action<IMvuCommand> dispatchCommandAction)
          => runProgramLoopAsync2<TModel>(_programCommandChannel.Reader,
