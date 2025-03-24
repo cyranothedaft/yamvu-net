@@ -6,6 +6,7 @@ using CounterSample.AppCore;
 
 namespace ConsoleSample;
 
+// TODO: is this intermediate dispatching necessary? shouldn't we just bind keypress('Q') directly to programInputSources.RaiseQuitButtonPressed() ?
 internal static class ProgramKeyDispatcher {
    /// <summary>
    /// Returns true if this call handled the keypress

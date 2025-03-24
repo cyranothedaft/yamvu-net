@@ -11,33 +11,37 @@ namespace ConsoleSample.View;
 
 internal class ViewBuilder {
 
-   public static PlatformView<MvuView> BuildInitialView()
+   public static PlatformView<ProgramView> BuildInitialView()
       => new(buildInitialMvuView(),
              new ViewInputBindings());
 
 
-   private static MvuView buildInitialMvuView()
-      => new MvuView(renderViewLines("(There's no model yet)"  // TODO: is this even needed/wanted? Seems better if the view definition doesn't have to account for this case
+   private static ProgramView buildInitialMvuView()
+      => new ProgramView(renderViewLines("(There's no model yet)"  // TODO: is this even needed/wanted? Seems better if the view definition doesn't have to account for this case
                                   ));
 
 
-   // because of how many UI platforms work, the visual part of the view is coupled with the input-event handling part
-   // to support that: the 'view' that's created has two components: (1) the view itself (the raw data for rendering the view),
-   // and (2) a table of input bindings (definitions of what happens when user input occurs).
+   // Because of how many UI platforms work, the visual part of the view is coupled with the input-event handling part
+   // to support that: the 'view' that's created has two components: (1) the view itself (the raw data for rendering the view: MvuView),
+   // and (2) a table of input bindings (definitions of what happens when user input occurs: ViewInputBindings).
+   // In this case, all input events originate outside the View object, so all are represented in the ViewInputBindings.
    // 
 
-   public static PlatformView<MvuView> BuildViewFromModel(MvuMessageDispatchDelegate dispatch, Model model, ILogger? uilogger) {
-      MvuView mvuView = buildMvuViewFromModel(model, uilogger);
-      ViewInputBindings inputBindings = new (() => dispatch(MvuMessages.Request_Quit()           ),
-                                             () => dispatch(MvuMessages.Request_Increment1()     ),
-                                             () => dispatch(MvuMessages.Request_IncrementRandom()));
-      PlatformView<MvuView> platformView = new PlatformView<MvuView>(mvuView, inputBindings);
+   public static PlatformView<ProgramView> BuildViewFromModel(MvuMessageDispatchDelegate dispatch, Model model, ILogger? uilogger) {
+      ProgramView programView = buildMvuViewFromModel(model, uilogger);
+
+      // (TODO: this isn't ideal) All events that generate messages (both external and internal to the view) must be funnelled through the view,
+      // because that's where the dispatch delegate is known to be.
+      ViewInputBindings inputBindings = new ( QuitButtonPressed:            () => dispatch(MvuMessages.Request_Quit()           ),
+                                              Increment1ButtonPressed:      () => dispatch(MvuMessages.Request_Increment1()     ),
+                                              IncrementRandomButtonPressed: () => dispatch(MvuMessages.Request_IncrementRandom()) );
+      PlatformView<ProgramView> platformView = new PlatformView<ProgramView>(programView, inputBindings);
       return platformView;
    }
 
 
-   private static MvuView buildMvuViewFromModel(Model model, ILogger? uilogger)
-      => new MvuView(renderViewLines(counterText: model.Counter.ToString() + (model.Counter == 0 ? " (the model's initial value)" : "")));
+   private static ProgramView buildMvuViewFromModel(Model model, ILogger? uilogger)
+      => new ProgramView(renderViewLines(counterText: model.Counter.ToString() + (model.Counter == 0 ? " (the model's initial value)" : "")));
 
 
    private static ImmutableList<string> renderViewLines(string counterText)

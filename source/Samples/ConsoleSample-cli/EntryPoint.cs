@@ -45,7 +45,7 @@ internal static class EntryPoint {
       //   this handles all user input and output (keyboard, display, etc.)
       using var viewPlatform = new ScrollingConsoleViewPlatform(handleAppKeyPressAndRaiseProgramKeyEvent, inpLogger, uiLogger);
 
-      AppMain<PlatformView<MvuView>> appMain = AppMain<PlatformView<MvuView>>.Build(//programInputSources,
+      ProgramRunnerWithServices<PlatformView<ProgramView>> programRunnerWithServices = ProgramRunnerWithServices<PlatformView<ProgramView>>.Build(//programInputSources,
                                                                                     loggers: (appLogger, svcLogger, runLogger, prgLogger, fxLogger, busLogger));
 
       appLogger?.LogInformation("Started, running program to completion...");
@@ -57,7 +57,7 @@ internal static class EntryPoint {
          ViewRenderer.DisplayView(ViewBuilder.BuildInitialView(), updateBindings);
 
          // run the program until it terminates
-         await appMain.RunProgramWithCommonBusAsync(replaceViewAction: platformView => ViewRenderer.DisplayView(platformView, updateBindings),
+         await programRunnerWithServices.RunProgramWithCommonBusAsync(replaceViewAction: platformView => ViewRenderer.DisplayView(platformView, updateBindings),
                                                     viewFunc: ViewBuilder.BuildViewFromModel);
 
          appLogger?.LogInformation("Program terminated normally - application will now end.");

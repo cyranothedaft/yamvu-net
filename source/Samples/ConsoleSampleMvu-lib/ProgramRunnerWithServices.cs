@@ -19,9 +19,9 @@ public delegate TView ViewFuncDelegate<out TView>(MvuMessageDispatchDelegate dis
                                                   //(input bindings are handled differently now) ProgramEventSources programEventSources,
                                                   ILogger? uiLogger);
 
-public class AppMain<TView> {
-   public static AppMain<TView> Build(// ProgramEventSources programEventSources,
-                                      (ILogger? app, ILogger? service, ILogger? programRunner, ILogger? program, ILogger? effect, ILogger? bus) loggers)
+public class ProgramRunnerWithServices<TView> {
+   public static ProgramRunnerWithServices<TView> Build(// ProgramEventSources programEventSources,
+                                                        (ILogger? app, ILogger? service, ILogger? programRunner, ILogger? program, ILogger? effect, ILogger? bus) loggers)
       => new (buildServices(loggers.service),
               buildProgramRunner(loggers.programRunner),
               // programEventSources,
@@ -49,7 +49,7 @@ public class AppMain<TView> {
    private readonly (ILogger? app, ILogger? ui, ILogger? program, ILogger? effect, ILogger? bus, ILogger? programRunner) _loggers;
 
 
-   public AppMain(IAppServices services,
+   public ProgramRunnerWithServices(IAppServices services,
                   IMvuProgramRunner<TView> programRunner,
                   // ProgramEventSources programEventSources,
                   (ILogger? app, ILogger? services, ILogger? program, ILogger? effect, ILogger? bus, ILogger? programRunner) loggers) {

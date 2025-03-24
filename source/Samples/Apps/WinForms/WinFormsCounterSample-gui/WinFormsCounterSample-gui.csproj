@@ -2,7 +2,7 @@
 
   <PropertyGroup>
     <OutputType>WinExe</OutputType>
-    <TargetFramework>net8.0-windows</TargetFramework>
+    <TargetFramework>net9.0-windows7.0</TargetFramework>
     <UseWindowsForms>true</UseWindowsForms>
     <RootNamespace>WinFormsCounterSample.gui</RootNamespace>
   </PropertyGroup>
@@ -13,6 +13,8 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\..\ConsoleSampleMvu-lib\CounterAppCore-lib.csproj" />
+    <ProjectReference Include="..\..\..\CounterMvu-lib\CounterMvu-lib.csproj" />
+    <ProjectReference Include="..\..\..\WinFormsCounterSampleMvu-lib\CounterAppCore-lib.csproj" />
   </ItemGroup>
 
 </Project>
