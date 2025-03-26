@@ -43,6 +43,7 @@ public interface IMvuProgramRunner<TView> : IMvuProgramRunnerEvents<TView> {
                                          Func<IMvuMessage, bool> isQuitMessage,
                                          Func<TView, bool>? queryTerminationAndSimulateInput = null,
                                          IMvuCommand[]? initialCommands = null,
+                                         ExternalMessageDispatcher? messageFromOutsideDispatcher = null,
                                          CancellationToken cancellationToken = default) 
          // where TEffect : IMvuEffect
          ;
@@ -82,6 +83,7 @@ public class ProgramRunner2<TCmd, TView> : IMvuProgramRunner<TView> where TCmd :
                                                             EmitViewDelegate<TView>? recordView = null,
                                                             Func<TView, bool>? queryTerminationAndSimulateInput = null,
                                                             IMvuCommand[]? initialCommands = null,
+                                                            ExternalMessageDispatcher? messageFromOutsideDispatcher = null,
                                                             TimeSpan? taskTimeout = default,
                                                             ILogger? busLogger = null,
                                                             ILogger? programRunnerLogger = null) 
@@ -116,6 +118,7 @@ public class ProgramRunner2<TCmd, TView> : IMvuProgramRunner<TView> where TCmd :
                                                         isQuitMessage,
                                                         queryTerminationAndSimulateInput,
                                                         initialCommands,
+                                                        messageFromOutsideDispatcher,
                                                         programCancellationToken);
 
    }
@@ -136,12 +139,18 @@ public class ProgramRunner2<TCmd, TView> : IMvuProgramRunner<TView> where TCmd :
                                                 Func<IMvuMessage, bool> isQuitMessage,
                                                 Func<TView, bool>? queryTerminationAndSimulateInput = null,
                                                 IMvuCommand[]? initialCommands = null,
+                                                ExternalMessageDispatcher? messageFromOutsideDispatcher = null,
                                                 CancellationToken cancellationToken = default)
          // where TEff : IMvuEffect
          // where TEff : IActionableEffectBase
    {
-
       ILogger? programLogger = _programRunnerLogger?.WithPrefix($"[run program {programInfo.Name}] ");
+
+      if (messageFromOutsideDispatcher is not null) {
+         programLogger?.LogTrace("Subscribing to " + nameof( messageFromOutsideDispatcher.MessageFromOutside ) + " event");
+         messageFromOutsideDispatcher.MessageFromOutside += message => dispatchCommand(messageAsCommand(message));
+      }
+
       Func<Task<TModel>> wrapped = ((Func<Task<TModel>>)(() => runProgramLoopAsync(dispatchCommand)))
                                   .wrapWithCommonBusLink2<TModel, TCmd>(commonBusPublisher, handleCommand)
                                   .wrapWithLogs2(programLogger);

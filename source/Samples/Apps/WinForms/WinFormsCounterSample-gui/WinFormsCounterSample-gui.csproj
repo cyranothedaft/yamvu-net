@@ -14,7 +14,6 @@
   <ItemGroup>
     <ProjectReference Include="..\..\..\ConsoleSampleMvu-lib\CounterAppCore-lib.csproj" />
     <ProjectReference Include="..\..\..\CounterMvu-lib\CounterMvu-lib.csproj" />
-    <ProjectReference Include="..\..\..\WinFormsCounterSampleMvu-lib\CounterAppCore-lib.csproj" />
   </ItemGroup>
 
 </Project>

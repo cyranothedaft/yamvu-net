@@ -12,10 +12,10 @@ namespace WinFormsCounterSample.gui;
 
 internal class WinFormProgram {
    private readonly MainForm _mainForm;
-   private Control _componentContainer;
 
-
-   public event Action? MainFormCloseRequested;
+   private bool _wasAlreadyStarted = false;
+   private bool _isFormClosing = false;
+   // private bool _wasExitAlreadyRequested = false;
 
 
    public WinFormProgram() {
@@ -27,20 +27,32 @@ internal class WinFormProgram {
 
 
    public void ReplaceView(ProgramView view) {
-      _componentContainer.SuspendLayout();
-      _componentContainer.Controls.Clear();
-      _componentContainer.Controls.AddRange(view.Controls.ToArray());
-      _componentContainer.ResumeLayout();
-      _componentContainer.Invalidate();
+      replaceView(view, _mainForm.MvuComponentContainer);
    }
 
 
-   public void AttachFormBehavior(Action<MainForm> formAction) {
-      formAction(_mainForm);
+   private static void replaceView(ProgramView view, Control componentContainer) {
+      componentContainer.SuspendLayout();
+      componentContainer.Controls.Clear();
+      componentContainer.Controls.AddRange(view.Controls.ToArray());
+      componentContainer.ResumeLayout();
+      componentContainer.Invalidate();
+   }
+
+
+   public void InternalExitRequested() {
+      // if ( _wasExitAlreadyRequested ) return;
+      // _wasExitAlreadyRequested = true;
+
+      if ( !_isFormClosing )
+         _mainForm.Close();
    }
 
 
    public async Task StartAsync() {
+      if ( _wasAlreadyStarted ) return;
+      _wasAlreadyStarted = true;
+
       _mainForm.FormClosed += MainForm_FormClosed;
       await _mainForm.InitializeAsync();
       _mainForm.Show();
@@ -48,6 +60,7 @@ internal class WinFormProgram {
 
 
    private void MainForm_FormClosed(object? sender, FormClosedEventArgs e) {
+      _isFormClosing = true;
       OnExitRequested(EventArgs.Empty);
    }
 

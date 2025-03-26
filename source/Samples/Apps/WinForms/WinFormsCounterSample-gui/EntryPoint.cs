@@ -1,12 +1,13 @@
 using System;
+using System.Diagnostics;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
-using CounterSample.AppCore;
 using Microsoft.Extensions.Logging;
 using WinFormsCounterSample.gui.UI;
 using WinFormsCounterSample.View;
 using WinFormsCounterSample.ViewPlatform;
+using yamvu;
 
 
 
@@ -26,24 +27,35 @@ internal static class EntryPoint {
       using ILoggerFactory loggerFactory = LoggerFactory.Create(builder => builder.AddDebug()
                                                                                   .SetMinimumLevel(minimumLogLevel));
 
+      ExternalMessageDispatcher externalMessageDispatcher = new();
+
       WinFormProgram winformProgram = new WinFormProgram();
-      MvuPlatformProgram mvuPlatformProgram = new MvuPlatformProgram();
+      MvuPlatformProgram mvuPlatformProgram = new MvuPlatformProgram(externalMessageDispatcher);
 
       // mvuPlatformProgram.SetComponentContainer(winformProgram.ComponentContainer);
 
-      winformProgram.MainFormCloseRequested += mvuPlatformProgram.ExternalExitRequested;
+      winformProgram.ExitRequested += mvuPlatformProgram.ExternalExitRequested;
 
       mvuPlatformProgram.ViewEmitted += winformProgram.ReplaceView;
+      mvuPlatformProgram.ProgramExited += winformProgram.InternalExitRequested;
 
       // winformProgram.AttachFormBehavior(form => mvuPlatformProgram.InjectIntoForm(form));
       // winformProgram.MainFormCloseRequested += Program_ExitRequested;
 
-      Task mvuProgramTask = mvuPlatformProgram.StartAsync();
-      RunAndHandleExceptionsAsync(mvuProgramTask); // essentially, fire and forget
+
+      async Task runMvuProgram() {
+         await mvuPlatformProgram.RunAsync();
+         Debug.WriteLine("MVU program terminated");
+      }
+
+
+      Task mvuProgramTask = runMvuProgram();
+      RunAndHandleExceptionsAsync(mvuProgramTask);
 
       Task winformProgramTask = winformProgram.StartAsync();
       RunAndHandleExceptionsAsync(winformProgramTask); // essentially, fire and forget
       Application.Run();
+      Debug.WriteLine("Winform program terminated");
    }
 
 

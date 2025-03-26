@@ -6,6 +6,7 @@ using CounterMvu_lib.Effects;
 using CounterMvu_lib.Messages;
 using CounterSample.AppCore.Services;
 using Microsoft.Extensions.Logging;
+using yamvu;
 using yamvu.core;
 using yamvu.core.Primitives;
 using yamvu.Runners;
@@ -20,10 +21,12 @@ public delegate TView ViewFuncDelegate<out TView>(MvuMessageDispatchDelegate dis
                                                   ILogger? uiLogger);
 
 public class ProgramRunnerWithServices<TView> {
-   public static ProgramRunnerWithServices<TView> Build(// ProgramEventSources programEventSources,
+   public static ProgramRunnerWithServices<TView> Build(ExternalMessageDispatcher? messageFromOutsideDispatcher,
+                                                        // ProgramEventSources programEventSources,
                                                         (ILogger? app, ILogger? service, ILogger? programRunner, ILogger? program, ILogger? effect, ILogger? bus) loggers)
       => new (buildServices(loggers.service),
               buildProgramRunner(loggers.programRunner),
+              messageFromOutsideDispatcher,
               // programEventSources,
               (loggers.app,
                loggers.service,
@@ -45,18 +48,21 @@ public class ProgramRunnerWithServices<TView> {
 
    private readonly IAppServices _services;
    private readonly IMvuProgramRunner<TView> _programRunner;
+   private readonly ExternalMessageDispatcher? _messageFromOutsideDispatcher;
    // private readonly ProgramEventSources _programEventSources;
    private readonly (ILogger? app, ILogger? ui, ILogger? program, ILogger? effect, ILogger? bus, ILogger? programRunner) _loggers;
 
 
    public ProgramRunnerWithServices(IAppServices services,
-                  IMvuProgramRunner<TView> programRunner,
-                  // ProgramEventSources programEventSources,
-                  (ILogger? app, ILogger? services, ILogger? program, ILogger? effect, ILogger? bus, ILogger? programRunner) loggers) {
-      _services            = services;
-      _programRunner       = programRunner;
+                                    IMvuProgramRunner<TView> programRunner,
+                                    ExternalMessageDispatcher? messageFromOutsideDispatcher,
+                                    // ProgramEventSources programEventSources,
+                                    (ILogger? app, ILogger? services, ILogger? program, ILogger? effect, ILogger? bus, ILogger? programRunner) loggers) {
+      _services                     = services;
+      _programRunner                = programRunner;
+      _messageFromOutsideDispatcher = messageFromOutsideDispatcher;
       // _programEventSources = programEventSources;
-      _loggers             = loggers;
+      _loggers                     = loggers;
    }
 
 
@@ -67,6 +73,7 @@ public class ProgramRunnerWithServices<TView> {
       _loggers.app?.LogDebug("Attached to runner");
 
       await runProgramWithCommonBusAsync(_services, _programRunner, 
+                                         _messageFromOutsideDispatcher,
                                          // _programEventSources, 
                                          viewFunc,
                                          (_loggers.ui,
@@ -79,6 +86,7 @@ public class ProgramRunnerWithServices<TView> {
 
    private static async Task runProgramWithCommonBusAsync(IAppServices services,
                                                           IMvuProgramRunner<TView> programRunner,
+                                                          ExternalMessageDispatcher? messageFromOutsideDispatcher,
                                                           // ProgramEventSources programEventSources,
                                                           ViewFuncDelegate<TView> viewFunc,
                                                           (ILogger? ui, ILogger? program, ILogger? effect, ILogger? bus, ILogger? programRunner) loggers) {
@@ -98,6 +106,7 @@ public class ProgramRunnerWithServices<TView> {
       Model finalModel = await ProgramRunner2<IMvuCommand, TView>.RunWithBusAsync(program, programInfo, programRunner, MessageExtensions.AsCommand, executeTheEffect,
                                                                                   isQuitMessage: msg => msg is Request_QuitMessage,
                                                                                   busCancellationToken, programCancellationToken,
+                                                                                  messageFromOutsideDispatcher: messageFromOutsideDispatcher,
                                                                                   busLogger: loggers.bus,
                                                                                   programRunnerLogger: loggers.programRunner);
       // TODO: return finalModel

@@ -1,43 +1,50 @@
 ﻿using System;
 using System.Threading.Tasks;
 using System.Windows.Forms;
+using CounterMvu_lib.Messages;
 using CounterSample.AppCore;
 using WinFormsCounterSample.gui.UI;
 using WinFormsCounterSample.View;
+using yamvu;
 
 
 
 namespace WinFormsCounterSample.gui;
 
 internal class MvuPlatformProgram {
-   private Control _componentContainer;
+   private readonly ExternalMessageDispatcher? _messageFromOutsideDispatcher;
 
+   private bool _wasExitAlreadyRequested = false;
 
    public event Action<ProgramView>? ViewEmitted;
+   public event Action? ProgramExited;
 
 
-   // public void SetComponentContainer(Control componentContainer) {
-   //    _componentContainer = componentContainer;
-   //
-   //    // form.Shown += startMvuProgram;
-   //    // TODO: anything?
-   // }
+   public MvuPlatformProgram(ExternalMessageDispatcher? messageFromOutsideDispatcher) {
+      _messageFromOutsideDispatcher = messageFromOutsideDispatcher;
+   }
 
 
-   public async Task StartAsync() {
+   public async Task RunAsync() {
       ProgramRunnerWithServices<PlatformView<ProgramView>> programRunnerWithServices = ProgramRunnerWithServices<PlatformView<ProgramView>>.Build( //programInputSources,
+                                                                                                                                                  _messageFromOutsideDispatcher,
                                                                                                                                                   loggers: (null, null, null, null, null, null));
       
       // run the program until it terminates
       await programRunnerWithServices.RunProgramWithCommonBusAsync(replaceViewAction: platformView => {
                                                                                          ViewEmitted?.Invoke(platformView.MvuView);
                                                                                       },
-                                                                   viewFunc: ViewBuilder.BuildViewFromModel);
+                                                                   viewFunc: ViewBuilder.BuildViewFromModel
+                                                                  );
+      ProgramExited?.Invoke();
    }
 
 
-   public void ExternalExitRequested() {
-      signalQuitRequest
+   public void ExternalExitRequested(object? sender, EventArgs eventArgs) {
+      if ( !_wasExitAlreadyRequested ) {
+         _wasExitAlreadyRequested = true;
+         _messageFromOutsideDispatcher?.Dispatch(MvuMessages.Request_Quit());
+      }
    }
 
 
