@@ -1,4 +1,4 @@
-using System.Threading.Tasks;
+using System;
 using System.Windows.Forms;
 using WinFormsCounterSample.gui.ViewPlatform;
 
@@ -13,12 +13,4 @@ public partial class MainForm : Form, IMvuControlContainer {
 
 
    public Control MvuComponentContainer => this;
-
-
-   public async Task InitializeAsync() {
-      // TODO: do stuff
-      await Task.Delay(1000);
-   }
-
-
 }

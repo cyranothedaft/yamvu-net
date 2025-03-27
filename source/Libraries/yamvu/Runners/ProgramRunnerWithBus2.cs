@@ -86,7 +86,7 @@ public class ProgramRunner2<TCmd, TView> : IMvuProgramRunner<TView> where TCmd :
                                                             ExternalMessageDispatcher? messageFromOutsideDispatcher = null,
                                                             TimeSpan? taskTimeout = default,
                                                             ILogger? busLogger = null,
-                                                            ILogger? programRunnerLogger = null) 
+                                                            ILogger? runWrapperLogger = null) 
          // where TEff : IMvuEffect
          {
 
@@ -104,7 +104,7 @@ public class ProgramRunner2<TCmd, TView> : IMvuProgramRunner<TView> where TCmd :
          return await ((Func<Task<TModel>>)(() => runProgramAsync(bus)))
                       .wrapWithViewRecording2<TView, TModel>(programRunner, recordView)
                       .wrapWithFeedRecording2<IMvuCommand, TModel>((IChannelEvents<IMvuCommand>)bus, recordCommand)
-                      .wrapWithLogs(programRunnerLogger)
+                      .wrapWithLogs(runWrapperLogger)
                       ();
       }
 

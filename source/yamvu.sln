@@ -38,7 +38,7 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Counter", "Counter", "{FFD0
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "WinForms", "WinForms", "{BD3A5122-E992-460D-8580-26772905475D}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WinFormsCounterSample-gui", "Samples\Apps\WinForms\WinFormsCounterSample-gui\WinFormsCounterSample-gui.csproj", "{3CE69EFB-EDA8-483B-AF59-5A6CC0F42483}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "WinFormsCounterSample-gui", "Samples\Apps\WinForms\WinFormsCounterSample-gui\WinFormsCounterSample-gui.csproj", "{A57884A0-8747-6CBE-782C-A914028BE7A9}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -74,10 +74,10 @@ Global
 		{6255908A-5100-400C-9297-5BFA79C76527}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{6255908A-5100-400C-9297-5BFA79C76527}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{6255908A-5100-400C-9297-5BFA79C76527}.Release|Any CPU.Build.0 = Release|Any CPU
-		{3CE69EFB-EDA8-483B-AF59-5A6CC0F42483}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{3CE69EFB-EDA8-483B-AF59-5A6CC0F42483}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{3CE69EFB-EDA8-483B-AF59-5A6CC0F42483}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{3CE69EFB-EDA8-483B-AF59-5A6CC0F42483}.Release|Any CPU.Build.0 = Release|Any CPU
+		{A57884A0-8747-6CBE-782C-A914028BE7A9}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{A57884A0-8747-6CBE-782C-A914028BE7A9}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{A57884A0-8747-6CBE-782C-A914028BE7A9}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{A57884A0-8747-6CBE-782C-A914028BE7A9}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -95,7 +95,7 @@ Global
 		{B743B789-F6C5-4005-A000-F68749E35B9A} = {15D4F636-9C6A-48DE-8A63-1234E98E8CD8}
 		{FFD0C806-3AB6-4ECB-B383-D152E2B1F72E} = {0E97B37E-40EB-4DCF-8A88-5075F62A4471}
 		{BD3A5122-E992-460D-8580-26772905475D} = {B743B789-F6C5-4005-A000-F68749E35B9A}
-		{3CE69EFB-EDA8-483B-AF59-5A6CC0F42483} = {BD3A5122-E992-460D-8580-26772905475D}
+		{A57884A0-8747-6CBE-782C-A914028BE7A9} = {BD3A5122-E992-460D-8580-26772905475D}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {D1147934-6BA8-408D-ACE5-E2ACF9064C3F}
