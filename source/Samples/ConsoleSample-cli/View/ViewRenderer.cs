@@ -4,7 +4,7 @@
 namespace ConsoleSample.View;
 
 internal static class ViewRenderer {
-   public static void DisplayView(PlatformView<MvuView> view, Action<ViewInputBindings> updateBindingsAction) {
+   public static void DisplayView(PlatformView<ProgramView> view, Action<ViewInputBindings> updateBindingsAction) {
       // update the (admitedly mutable) key bindings table according to invoke functions in the latest view
       updateBindingsAction(view.InputBindings);
 

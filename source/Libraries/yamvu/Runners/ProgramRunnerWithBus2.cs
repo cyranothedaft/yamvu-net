@@ -43,6 +43,7 @@ public interface IMvuProgramRunner<TView> : IMvuProgramRunnerEvents<TView> {
                                          Func<IMvuMessage, bool> isQuitMessage,
                                          Func<TView, bool>? queryTerminationAndSimulateInput = null,
                                          IMvuCommand[]? initialCommands = null,
+                                         ExternalMessageDispatcher? messageFromOutsideDispatcher = null,
                                          CancellationToken cancellationToken = default) 
          // where TEffect : IMvuEffect
          ;
@@ -82,9 +83,10 @@ public class ProgramRunner2<TCmd, TView> : IMvuProgramRunner<TView> where TCmd :
                                                             EmitViewDelegate<TView>? recordView = null,
                                                             Func<TView, bool>? queryTerminationAndSimulateInput = null,
                                                             IMvuCommand[]? initialCommands = null,
+                                                            ExternalMessageDispatcher? messageFromOutsideDispatcher = null,
                                                             TimeSpan? taskTimeout = default,
                                                             ILogger? busLogger = null,
-                                                            ILogger? programRunnerLogger = null) 
+                                                            ILogger? runWrapperLogger = null) 
          // where TEff : IMvuEffect
          {
 
@@ -102,7 +104,7 @@ public class ProgramRunner2<TCmd, TView> : IMvuProgramRunner<TView> where TCmd :
          return await ((Func<Task<TModel>>)(() => runProgramAsync(bus)))
                       .wrapWithViewRecording2<TView, TModel>(programRunner, recordView)
                       .wrapWithFeedRecording2<IMvuCommand, TModel>((IChannelEvents<IMvuCommand>)bus, recordCommand)
-                      .wrapWithLogs(programRunnerLogger)
+                      .wrapWithLogs(runWrapperLogger)
                       ();
       }
 
@@ -116,6 +118,7 @@ public class ProgramRunner2<TCmd, TView> : IMvuProgramRunner<TView> where TCmd :
                                                         isQuitMessage,
                                                         queryTerminationAndSimulateInput,
                                                         initialCommands,
+                                                        messageFromOutsideDispatcher,
                                                         programCancellationToken);
 
    }
@@ -124,6 +127,7 @@ public class ProgramRunner2<TCmd, TView> : IMvuProgramRunner<TView> where TCmd :
 
 
    private delegate Task<TModel> RunLoopAsyncDelegate<TModel>(Action<IMvuCommand> dispatchCommandAction);
+
 
 
    public Task<TModel> RunProgramAsync2<TModel>(IPublisher<IMvuCommand> commonBusPublisher,
@@ -135,20 +139,26 @@ public class ProgramRunner2<TCmd, TView> : IMvuProgramRunner<TView> where TCmd :
                                                 Func<IMvuMessage, bool> isQuitMessage,
                                                 Func<TView, bool>? queryTerminationAndSimulateInput = null,
                                                 IMvuCommand[]? initialCommands = null,
+                                                ExternalMessageDispatcher? messageFromOutsideDispatcher = null,
                                                 CancellationToken cancellationToken = default)
-    // where TEff : IMvuEffect
-   // where TEff : IActionableEffectBase
+         // where TEff : IMvuEffect
+         // where TEff : IActionableEffectBase
    {
+      ILogger? programLogger = _programRunnerLogger?.WithPrefix($"[run program {programInfo.Name}] ");
 
-   ILogger? programLogger = _programRunnerLogger?.WithPrefix($"[run program {programInfo.Name}] ");
-   Func<Task<TModel>> wrapped = ((Func<Task<TModel>>)(() => runProgramLoopAsync(dispatchCommand)))
-                               .wrapWithCommonBusLink2<TModel, TCmd>(commonBusPublisher, handleCommand)
-                               .wrapWithLogs2(programLogger);
-         return wrapped();
+      if (messageFromOutsideDispatcher is not null) {
+         programLogger?.LogTrace("Subscribing to " + nameof( messageFromOutsideDispatcher.MessageFromOutside ) + " event");
+         messageFromOutsideDispatcher.MessageFromOutside += message => dispatchCommand(messageAsCommand(message));
+      }
+
+      Func<Task<TModel>> wrapped = ((Func<Task<TModel>>)(() => runProgramLoopAsync(dispatchCommand)))
+                                  .wrapWithCommonBusLink2<TModel, TCmd>(commonBusPublisher, handleCommand)
+                                  .wrapWithLogs2(programLogger);
+      return wrapped();
 
       void dispatchCommand(IMvuCommand command) => dispatchCommandToCommonBus(commonBusWriter, _programRunnerLogger, command);
-      void handleCommand  (TCmd        command) => handleCommandFromCommonBus(_programCommandChannel.Writer, _programRunnerLogger, command);
-      void emitView       (TView view, bool isInitialView) => ViewEmitted?.Invoke(view, isInitialView);
+      void handleCommand(TCmd command) => handleCommandFromCommonBus(_programCommandChannel.Writer, _programRunnerLogger, command);
+      void emitView(TView view, bool isInitialView) => ViewEmitted?.Invoke(view, isInitialView);
 
       Task<TModel> runProgramLoopAsync(Action<IMvuCommand> dispatchCommandAction)
          => runProgramLoopAsync2<TModel>(_programCommandChannel.Reader,

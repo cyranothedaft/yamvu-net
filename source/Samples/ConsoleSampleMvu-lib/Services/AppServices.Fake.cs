@@ -2,7 +2,7 @@ using System;
 using Microsoft.Extensions.Logging;
 
 
-namespace ConsoleSampleMvu.AppCore.Services;
+namespace CounterSample.AppCore.Services;
 
 internal class AppServices_Fake : IAppServices {
 
@@ -19,5 +19,5 @@ internal class AppServices_Fake : IAppServices {
 
 
    public int GenerateRandomNumber()
-      => AppServices_Fake.NotSoRandomNumber;
+      => NotSoRandomNumber;
 }

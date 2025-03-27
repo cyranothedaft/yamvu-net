@@ -1,7 +1,7 @@
 ﻿using System;
 
 
-namespace ConsoleSampleMvu.AppCore.Services;
+namespace CounterSample.AppCore.Services;
 
 public interface IAppServices {
    int GenerateRandomNumber();

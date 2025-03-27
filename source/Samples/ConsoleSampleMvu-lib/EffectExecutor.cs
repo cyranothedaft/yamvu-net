@@ -1,11 +1,11 @@
 using System;
 using System.Threading.Tasks;
-using ConsoleSampleMvu.AppCore.Services;
 using CounterMvu_lib.Effects;
+using CounterSample.AppCore.Services;
 
 
 
-namespace ConsoleSampleMvu.AppCore;
+namespace CounterSample.AppCore;
 
 internal class EffectExecutor : IEffects {
    private readonly IAppServices _services;
