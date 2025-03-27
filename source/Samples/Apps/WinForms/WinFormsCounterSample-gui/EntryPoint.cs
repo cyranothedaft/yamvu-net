@@ -60,6 +60,8 @@ internal static class EntryPoint {
          externalMessageDispatcher.Dispatch(MvuMessages.Request_Quit());
       }
 
+      
+
       form.Load        += onShownRunMvuProgram;
       form.FormClosing += onClosingStopMvuProgram;
    }
@@ -81,24 +83,5 @@ internal static class EntryPoint {
       componentContainer.Controls.AddRange(view.MvuView.Controls.ToArray());
       componentContainer.ResumeLayout();
       componentContainer.Invalidate();
-   }
-
-
-   private static void Program_ExitRequested(object? sender, EventArgs e) {
-      // TODO?
-   }
-
-
-   private static async void RunAndHandleExceptionsAsync(Task task) {
-      try {
-         // Force this to yield to the caller, so Application.Run will be executing
-         await Task.Yield();
-         await task;
-      }
-      catch (Exception ex) {
-         throw;
-         //=== ...log the exception, show an error to the user, etc.
-         Application.Exit();
-      }
    }
 }

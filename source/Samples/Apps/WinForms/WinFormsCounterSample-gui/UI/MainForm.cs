@@ -11,6 +11,6 @@ public partial class MainForm : Form, IMvuControlContainer {
       InitializeComponent();
    }
 
-
+   // N.B.: the form's DoubleBuffered property has also been set to true, to try reducing flickering when view components are replaced
    public Control MvuComponentContainer => this;
 }
