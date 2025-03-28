@@ -1,0 +1,18 @@
+<Project Sdk="MSTest.Sdk/3.6.4">
+
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+    <RootNamespace>CounterMvu_lib_test</RootNamespace>
+    <UseVSTest>true</UseVSTest>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\Libraries\yamvu.Testing\yamvu.Testing.csproj" />
+    <ProjectReference Include="..\..\CounterMvu-lib\CounterMvu-lib.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="WelterKit.Testing" />
+  </ItemGroup>
+
+</Project>

@@ -1,0 +1,34 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+     <TargetFramework>net8.0</TargetFramework>
+     <AssemblyName>yamvu-core</AssemblyName>
+     <RootNamespace>yamvu.core</RootNamespace>
+
+     <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
+     <PackageId>yamvu.Core</PackageId>
+     <Version>$(VersionPrefix)$(VersionSuffix)</Version>
+
+     <Authors>Eric Tolman</Authors>
+     <Description>Core types and abstractions for MVU programs.</Description>
+     <Copyright>Copyright (c) 2025 Eric Tolman</Copyright>
+     <PackageLicenseExpression>MIT</PackageLicenseExpression>
+     <PackageProjectUrl>https://github.com/cyranothedaft/yamvu-net</PackageProjectUrl>
+     <Title>yamvu Core library</Title>
+     <RepositoryUrl>https://github.com/cyranothedaft/yamvu-net.git</RepositoryUrl>
+     <PackageReadmeFile>README.md</PackageReadmeFile>
+  </PropertyGroup>
+
+  <ItemGroup>
+     <None Include="..\..\..\README.md">
+        <Pack>True</Pack>
+        <PackagePath>\</PackagePath>
+     </None>
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" />
+    <PackageReference Include="WelterKit" />
+  </ItemGroup>
+
+</Project>

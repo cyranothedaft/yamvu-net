@@ -1,0 +1,35 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>net8.0</TargetFramework>
+
+      <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
+      <PackageId>yamvu.Testing</PackageId>
+      <Version>$(VersionPrefix)$(VersionSuffix)</Version>
+
+      <Authors>Eric Tolman</Authors>
+      <Description>Functions and structures for unit testing MVU programs.</Description>
+      <Copyright>Copyright (c) 2025 Eric Tolman</Copyright>
+      <PackageLicenseExpression>MIT</PackageLicenseExpression>
+      <PackageProjectUrl>https://github.com/cyranothedaft/yamvu-net</PackageProjectUrl>
+      <Title>yamvu Testing Utilities</Title>
+      <RepositoryUrl>https://github.com/cyranothedaft/yamvu-net.git</RepositoryUrl>
+      <PackageReadmeFile>README.md</PackageReadmeFile>
+  </PropertyGroup>
+
+   <ItemGroup>
+      <None Include="..\..\..\README.md">
+         <Pack>True</Pack>
+         <PackagePath>\</PackagePath>
+      </None>
+   </ItemGroup>
+
+   <ItemGroup>
+    <PackageReference Include="WelterKit.Testing" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\yamvu.core\yamvu.core.csproj" />
+  </ItemGroup>
+
+</Project>
