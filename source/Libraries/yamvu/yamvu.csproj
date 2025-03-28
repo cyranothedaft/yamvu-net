@@ -4,7 +4,27 @@
     <TargetFramework>net8.0</TargetFramework>
      <AssemblyName>yamvu</AssemblyName>
      <RootNamespace>yamvu</RootNamespace>
+
+     <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
+     <PackageId>yamvu</PackageId>
+     <Version>$(VersionPrefix)$(VersionSuffix)</Version>
+
+     <Authors>Eric Tolman</Authors>
+     <Description>Main MVU library for .NET.</Description>
+     <Copyright>Copyright (c) 2025 Eric Tolman</Copyright>
+     <PackageLicenseExpression>MIT</PackageLicenseExpression>
+     <PackageProjectUrl>https://github.com/cyranothedaft/yamvu-net</PackageProjectUrl>
+     <Title>yamvu library</Title>
+     <RepositoryUrl>https://github.com/cyranothedaft/yamvu-net.git</RepositoryUrl>
+     <PackageReadmeFile>README.md</PackageReadmeFile>
   </PropertyGroup>
+
+  <ItemGroup>
+     <None Include="..\..\..\README.md">
+        <Pack>True</Pack>
+        <PackagePath>\</PackagePath>
+     </None>
+  </ItemGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\yamvu.core\yamvu.core.csproj" />
