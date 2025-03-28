@@ -13,36 +13,23 @@ using Microsoft.UI.Xaml.Media;
 using Microsoft.UI.Xaml.Navigation;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
+using WinUI3CounterSample.gui.ViewPlatform;
+
+
 
 // To learn more about WinUI, the WinUI project structure,
 // and more about our project templates, see: http://aka.ms/winui-project-info.
 
-namespace WinUI3Sample
-{
-    /// <summary>
-    /// An empty window that can be used on its own or navigated to within a Frame.
-    /// </summary>
-    public sealed partial class MainWindow : Window
-    {
-       private int _counter = 0;
-       
-       public MainWindow()
-        {
-            this.InitializeComponent();
-            myPanel.KeyUp += (_, args) =>
-            {
-               Debug.WriteLine("KeyUp: " + args);
-            };
-        }
+namespace WinUI3CounterSample;
 
-        private void myButton_Click(object sender, RoutedEventArgs e)
-        {
-            myButton.Content = "Clicked";
-            mvuView.Children.Clear();
-            mvuView.Children.Add(new TextBlock()
-            {
-               Text = "New contents " + (_counter++)
-            });
-        }
-    }
+/// <summary>
+/// An empty window that can be used on its own or navigated to within a Frame.
+/// </summary>
+public sealed partial class MainWindow : Window, IMvuComponentContainer {
+   public Panel MvuComponentContainer => mvuView;
+
+
+   public MainWindow() {
+      this.InitializeComponent();
+   }
 }

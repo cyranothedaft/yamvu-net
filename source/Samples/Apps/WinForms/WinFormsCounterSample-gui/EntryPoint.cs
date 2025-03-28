@@ -40,13 +40,13 @@ internal static class EntryPoint {
    private static void embedMvuProgramInForm(MainForm form) {
       ExternalMessageDispatcher externalMessageDispatcher = new();
 
-      async void onShownRunMvuProgram(object? sender, EventArgs e) {
+      async void onLoadRunMvuProgram(object? sender, EventArgs e) {
          try {
-            // form is loading - start (asynchronously run) the MVU program
+            // form has loaded, so start (asynchronously run) the MVU program
             await runMvuProgramAsync(externalMessageDispatcher,
                                      viewEmittedCallback: view => replaceMvuComponents(form.MvuComponentContainer, view));
 
-            // the MVU program has terminated normally - signal the form to close
+            // the MVU program has terminated normally, so signal the form to close
             form.Close();
          }
          catch (Exception exception) {
@@ -56,13 +56,11 @@ internal static class EntryPoint {
       }
 
       void onClosingStopMvuProgram(object? sender, FormClosingEventArgs e) {
-         // form is closing - signal the MVU program to terminate
+         // form is closing, so signal the MVU program to terminate
          externalMessageDispatcher.Dispatch(MvuMessages.Request_Quit());
       }
 
-      
-
-      form.Load        += onShownRunMvuProgram;
+      form.Load        += onLoadRunMvuProgram;
       form.FormClosing += onClosingStopMvuProgram;
    }
 
