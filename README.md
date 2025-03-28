@@ -10,17 +10,25 @@ Made from scratch using only the freshest organic ingredients (blood, sweat, tea
 
   _Targets .NET 8.0_.
 
+  https://www.nuget.org/packages/yamvu/
+
 - ### yamvu.Core
 
   Core MVU types and abstractions.
 
   _Targets .NET 8.0_.
 
+  https://www.nuget.org/packages/yamvu.Core/
+
 - ### yamvu.Testing
 
   Utilities to aid with automated testing / unit tests.
 
   _Targets .NET 8.0_.
+
+  https://www.nuget.org/packages/yamvu.Testing/
+
+
 
 _This is Work in progress. It is probably not for everyone._
 
