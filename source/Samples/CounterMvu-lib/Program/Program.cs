@@ -1,5 +1,6 @@
 ﻿using Microsoft.Extensions.Logging;
 using yamvu.core;
+using yamvu.Runners;
 
 
 
@@ -12,4 +13,8 @@ public static class Program {
 
    public static IMvuProgram2<Model, TView> Build<TView>(ViewDelegate<Model, TView> viewFunc, ILogger? logger)
       => new ProgramWithView<TView>(new ProgramUpdate(logger), viewFunc);
+
+
+   public static IMvuProgramRunner<TView> BuildRunner<TView>(ILoggerFactory? loggerFactory)
+      => new ProgramRunner2<ICounterMvuCommand, TView>(loggerFactory?.CreateLogger("run"));
 }
