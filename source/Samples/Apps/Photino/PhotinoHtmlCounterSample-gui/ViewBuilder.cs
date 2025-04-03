@@ -13,6 +13,6 @@ namespace PhotinoHtmlCounterSample.gui;
 
 internal static class ViewBuilder {
    public static PhotinoView BuildView(MvuMessageDispatchDelegate dispatch, Model model) {
-      throw new NotImplementedException();
+      return new PhotinoView();// TODO
    }
 }

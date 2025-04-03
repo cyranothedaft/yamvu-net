@@ -17,7 +17,7 @@ public class ProgramRunnerWithBus {
 
    public static async Task<TModel> RunProgramWithCommonBusAsync<TModel, TView>(IMvuProgramRunner<TView> programRunner, IMvuProgram2<TModel, TView> program,
                                                                                 Action<TView> replaceViewAction, ViewFuncDelegate<TModel, TView> viewFunc, ILoggerFactory? loggerFactory,
-                                                                                ExternalMessageDispatcher? messageFromOutsideDispatcher,
+                                                                                ExternalMessageDispatcher? externalMessageDispatcher,
                                                                                 ProgramInfo programInfo, Func<IMvuMessage, IMvuCommand> messageAsCommand,
                                                                                 ExecuteEffectDelegate<IMvuEffect> executeEffectAction, Func<IMvuMessage, bool> isQuitMessage) {
       ILogger? hostLogger = loggerFactory?.CreateLogger("host");
@@ -33,11 +33,11 @@ public class ProgramRunnerWithBus {
       CancellationToken programCancellationToken = new();
 
       TModel finalModel = await ProgramRunner2<IMvuCommand, TView>.RunWithBusAsync(program, programInfo, programRunner,
-                                                                                    messageAsCommand, executeEffectAction, isQuitMessage,
-                                                                                    busCancellationToken, programCancellationToken,
-                                                                                    messageFromOutsideDispatcher: messageFromOutsideDispatcher,
-                                                                                    busLogger: busLogger,
-                                                                                    runWrapperLogger: runWrapperLogger);
+                                                                                   messageAsCommand, executeEffectAction, isQuitMessage,
+                                                                                   busCancellationToken, programCancellationToken,
+                                                                                   externalMessageDispatcher: externalMessageDispatcher,
+                                                                                   busLogger: busLogger,
+                                                                                   runWrapperLogger: runWrapperLogger);
       return finalModel;
    }
 
