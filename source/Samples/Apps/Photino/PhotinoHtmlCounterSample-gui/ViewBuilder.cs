@@ -42,7 +42,7 @@ internal static class ViewBuilder {
    private static string buildHtml(Model model)
       => string.Concat(Script().Render(),
                        P($"Counter: ", Span(model.Counter.ToString())).Render(),
-                       Button().Render()
+                       Button(@class("primary center")).Render()
                       );
 
    // like this:  https://github.com/codechem/CC.CSX?tab=readme-ov-file
@@ -51,6 +51,8 @@ internal static class ViewBuilder {
    private static HtmlNode P     (params HtmlNode[] contents) => new HtmlTag(contents, "p"     , CanSelfClose: false);
    private static HtmlNode Script(params HtmlNode[] contents) => new HtmlTag(contents, "script", CanSelfClose: false);
    private static HtmlNode Span  (params HtmlNode[] contents) => new HtmlTag(contents, "span"  , CanSelfClose: false);
+
+   private static AttributeNode @class(string contents) => new AttributeNode("class", contents);
 
    // private static ScriptNode Script() => new ScriptNode();
    // private static      PNode P()      => new PNode();
