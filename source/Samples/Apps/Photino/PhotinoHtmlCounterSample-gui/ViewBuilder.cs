@@ -13,6 +13,9 @@ namespace PhotinoHtmlCounterSample.gui;
 
 internal static class ViewBuilder {
    public static PhotinoView BuildView(MvuMessageDispatchDelegate dispatch, Model model) {
-      return new PhotinoView();// TODO
+      return new PhotinoView($"""
+                              <p>Counter: {model.Counter}</p>
+                              <button class="primary center" onclick="startMvuProgram()">Start MVU Program</button>
+                              """);// TODO
    }
 }

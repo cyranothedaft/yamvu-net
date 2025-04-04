@@ -12,24 +12,32 @@
 
     <h1 class="text-center">Sample Photino HTML MVU App</h1>
 
-    <p class="text-center">
-        - Initializing -
-    </p>
-    <!-- <button class="primary center" onclick="callDotNet()">Call .NET</button> -->
-    <button class="primary center" onclick="startMvuProgram()">Start MVU Program</button>
+    <div id="mvudiv">
+        <p class="text-center">
+            - Initializing -
+        </p>
+        <!-- <button class="primary center" onclick="callDotNet()">Call .NET</button> -->
+        <button class="primary center" onclick="startMvuProgram()">Start MVU Program</button>
+    </div>
 
     <!-- <script src="app://dynamic.js"></script> -->
 
     <script>
-        function callDotNet() {
-            window.external.sendMessage('Hi .NET! 🤖');
-        }
+        var mvudiv = document.getElementById('mvudiv');
+
+        // function callDotNet() {
+        //     window.external.sendMessage('Hi .NET! 🤖');
+        // }
 
         function startMvuProgram() {
             window.external.sendMessage('mvu:StartProgram');
         }
 
         // window.external.receiveMessage(message => alert(message));
+
+        window.external.receiveMessage(message => {
+            mvudiv.innerHTML = message;
+        });
     </script>
 </body>
 </html>

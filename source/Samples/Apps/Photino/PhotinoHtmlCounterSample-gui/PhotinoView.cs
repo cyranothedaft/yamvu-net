@@ -2,5 +2,6 @@
 
 namespace PhotinoHtmlCounterSample.gui;
 
-internal class PhotinoView {
-}
+internal record PhotinoView(
+      string Html
+);

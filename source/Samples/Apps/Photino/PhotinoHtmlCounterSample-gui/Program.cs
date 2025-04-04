@@ -11,6 +11,10 @@ using Microsoft.Extensions.Logging;
 using yamvu;
 using yamvu.core;
 using yamvu.Runners;
+using CounterMvu_lib.Effects;
+using CounterSample.AppCore;
+using yamvu.core.Primitives;
+using CounterProgram = CounterMvu_lib.Program.Program;
 
 
 
@@ -52,22 +56,40 @@ internal static class Program {
                                        // Users can resize windows by default.
                                        // Let's make this one fixed instead.
                                       .SetResizable(false)
-            // .RegisterDynamicScript()
-            // .RegisterWebMessageHandler1()
+             // .RegisterDynamicScript()
+             // .RegisterWebMessageHandler()
             ;
       return window;
    }
 
 
    private static IMvuProgram2<Model, PhotinoView> buildMvuProgram(ILoggerFactory? loggerFactory) {
-      IMvuProgram2<Model, PhotinoView> program = MvuProgramRunner.BuildMvuProgram(loggerFactory);
+      IMvuProgram2<Model, PhotinoView> program = BuildMvuProgram(loggerFactory);
       return program;
+   }
+
+   private static IMvuProgram2<Model, PhotinoView> BuildMvuProgram(ILoggerFactory? loggerFactory) {
+      IMvuProgram2<Model, PhotinoView> mvuProgram = CounterProgram.Build(ViewBuilder.BuildView, loggerFactory?.CreateLogger("prog"));
+      return mvuProgram;
    }
 
 
    private static IMvuProgramRunner<PhotinoView> buildMvuProgramRunner(PhotinoWindow window, IAppServices services, ExternalMessageDispatcher? externalMessageDispatcher, ILoggerFactory? loggerFactory) {
-      IMvuProgramRunner<PhotinoView> program = MvuProgramRunner.BuildMvuProgramRunner(window, services, externalMessageDispatcher, loggerFactory);
+      IMvuProgramRunner<PhotinoView> program = BuildMvuProgramRunner(window, services, externalMessageDispatcher, loggerFactory);
       return program;
+   }
+
+   private static IMvuProgramRunner<PhotinoView> BuildMvuProgramRunner(PhotinoWindow window, IAppServices appServices,
+                                                                                                            ExternalMessageDispatcher? externalMessageDispatcher, ILoggerFactory? loggerFactory
+
+         // Action<Exception> handleException
+   ) {
+
+      IMvuProgramRunner<PhotinoView> mvuProgramRunner = CounterProgram.BuildRunner<PhotinoView>(loggerFactory);
+
+
+      return mvuProgramRunner;
+
    }
 
 
@@ -96,14 +118,41 @@ internal static class Program {
 
       async Task runMvuProgramAsync() {
          appLogger?.LogTrace(">> MVU program");
-         await MvuProgramRunner.RunMvuProgramAsync(window, appServices, mvuProgramRunner, mvuProgram,
-                                                   externalMessageDispatcher, loggerFactory);
+         await runMvuProgramAsync2(window, appServices, mvuProgramRunner, mvuProgram,
+                                  externalMessageDispatcher, loggerFactory);
          appLogger?.LogTrace("<< MVU program");
 
          // the MVU program has ended, so signal the window to close (if it's not closed already)
          appLogger?.LogTrace(">> Closing window");
          window.Close();
          appLogger?.LogTrace("<< Closing window");
+      }
+   }
+
+
+   private static async Task runMvuProgramAsync2(PhotinoWindow window, IAppServices appServices, IMvuProgramRunner<PhotinoView> mvuProgramRunner, IMvuProgram2<Model, PhotinoView> mvuProgram,
+                                                 ExternalMessageDispatcher? externalMessageDispatcher, ILoggerFactory? loggerFactory) {
+      IEffects effectExecutor = new EffectExecutor (appServices);
+      Model finalModel = await ProgramRunnerWithBus.RunProgramWithCommonBusAsync(mvuProgramRunner, mvuProgram,
+                                                                                 updateView, buildView,
+                                                                                 loggerFactory, externalMessageDispatcher, CounterProgram.Info,
+                                                                                 CounterProgram.MessageAsCommandFunc, effecuteEffect, CounterProgram.IsQuitMessageFunc);
+
+
+      void updateView(PhotinoView view) {
+         window.SendWebMessage(view.Html);
+      }
+
+      static PhotinoView buildView(MvuMessageDispatchDelegate dispatch, Model model, ILogger? uilogger)
+         => ViewBuilder.BuildView(dispatch, model);
+
+      void effecuteEffect(IMvuEffect effect, IHasEffectResultHandler hasresulthandler)
+         => executeEffect2(effectExecutor, effect, hasresulthandler, loggerFactory?.CreateLogger("fx"));
+
+      static void executeEffect2(IEffects effectExecutor, IMvuEffect effect, IHasEffectResultHandler resultHandler, ILogger? effectLogger) {
+         // TODO: await !!!
+         // this fires-and-forgets without proper exception trapping
+         EffectDispatcher.DispatchToExecutorAsync(effectExecutor, effect, resultHandler, effectLogger);
       }
    }
 
