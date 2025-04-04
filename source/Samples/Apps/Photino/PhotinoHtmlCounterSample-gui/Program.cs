@@ -140,7 +140,7 @@ internal static class Program {
 
 
       void updateView(PhotinoView view) {
-         window.SendWebMessage(view.Html);
+         window.SendWebMessage(view.HtmlFragment);
       }
 
       static PhotinoView buildView(MvuMessageDispatchDelegate dispatch, Model model, ILogger? uilogger)
@@ -161,19 +161,6 @@ internal static class Program {
       window = window.Load("wwwroot/index.html"); // Can be used with relative path strings or "new URI()" instance to load a website.
       window.WaitForClose(); // Starts the application event loop
    }
-
-
-   private static PhotinoWindow RegisterDynamicScript(this PhotinoWindow window)
-      => window.RegisterCustomSchemeHandler("app", (object sender, string scheme, string url, out string contentType) => {
-                                                      contentType = "text/javascript";
-                                                      return new MemoryStream(Encoding.UTF8.GetBytes(@"
-                                                          (() =>{
-                                                              window.setTimeout(() => {
-                                                                  alert(`🎉 Dynamically inserted JavaScript.`);
-                                                              }, 1000);
-                                                          })();
-                                                      "));
-                                                   });
 
 
    private static PhotinoWindow RegisterWebMessageHandler1(this PhotinoWindow window)

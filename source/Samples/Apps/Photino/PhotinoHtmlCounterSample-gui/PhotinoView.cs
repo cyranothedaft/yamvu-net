@@ -1,7 +1,8 @@
 ﻿using System;
 
+
 namespace PhotinoHtmlCounterSample.gui;
 
 internal record PhotinoView(
-      string Html
+      string HtmlFragment
 );
