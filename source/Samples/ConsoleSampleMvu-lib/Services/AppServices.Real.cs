@@ -4,7 +4,7 @@ using Microsoft.Extensions.Logging;
 
 namespace CounterSample.AppCore.Services;
 
-internal class AppServices_Real : IAppServices {
+public class AppServices_Real : IAppServices {
    private static readonly Random _rng = new Random(); // seeds with datetime ticks by default
 
    private readonly ILogger? _serviceLogger;

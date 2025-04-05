@@ -3,7 +3,7 @@ using Microsoft.Extensions.Logging;
 
 
 
-namespace CounterMvu_lib_test;
+namespace CounterSample.AppCore.Mvu_test;
 
 internal class LoggerForTesting : ILogger {
    private readonly LogLevel _minimumLogLevel;

@@ -2,7 +2,7 @@
 using yamvu.core.Primitives;
 
 
-namespace CounterMvu_lib.Program;
+namespace CounterSample.AppCore.Mvu.Program;
 
 public class ProgramWithView<TView> : IMvuProgram2<Model, TView> {
    private readonly ProgramUpdate _programUpdate;

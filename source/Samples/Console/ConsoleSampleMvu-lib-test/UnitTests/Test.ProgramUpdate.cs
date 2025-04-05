@@ -1,8 +1,8 @@
-﻿using CounterMvu_lib;
-using CounterMvu_lib.Effects;
-using CounterMvu_lib.Messages;
-using CounterMvu_lib.Program;
-using CounterMvu;
+﻿using CounterMvu;
+using CounterSample.AppCore.Mvu;
+using CounterSample.AppCore.Mvu.Effects;
+using CounterSample.AppCore.Mvu.Messages;
+using CounterSample.AppCore.Mvu.Program;
 using Microsoft.Extensions.Logging;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using yamvu.core.Primitives;
@@ -10,7 +10,7 @@ using yamvu.Testing;
 
 
 
-namespace CounterMvu_lib_test.UnitTests;
+namespace CounterSample.AppCore.Mvu_test.UnitTests;
 
 [TestClass]
 public sealed class Test_ProgramUpdate {

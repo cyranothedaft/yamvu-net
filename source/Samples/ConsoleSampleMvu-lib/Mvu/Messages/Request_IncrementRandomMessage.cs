@@ -1,11 +1,11 @@
 ﻿using System;
-using CounterMvu_lib.Effects;
+using CounterSample.AppCore.Mvu.Effects;
 using WelterKit.Std.StaticUtilities;
 using yamvu.core;
 using yamvu.core.Primitives;
 
 
-namespace CounterMvu_lib.Messages;
+namespace CounterSample.AppCore.Mvu.Messages;
 
 
 public static partial class MvuMessages {

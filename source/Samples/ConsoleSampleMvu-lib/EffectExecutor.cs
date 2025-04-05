@@ -1,16 +1,16 @@
 using System;
 using System.Threading.Tasks;
-using CounterMvu_lib.Effects;
+using CounterSample.AppCore.Mvu.Effects;
 using CounterSample.AppCore.Services;
 
 
 
 namespace CounterSample.AppCore;
 
-internal class EffectExecutor : IEffects {
+public class EffectExecutor : IEffects {
    private readonly IAppServices _services;
 
-   internal EffectExecutor(IAppServices services) {
+   public EffectExecutor(IAppServices services) {
       _services = services;
    }
 

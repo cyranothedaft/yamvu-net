@@ -1,11 +1,12 @@
 ﻿using System;
-using CounterMvu_lib.Effects;
+using System.Threading.Tasks;
+using CounterSample.AppCore.Mvu.Effects;
 using Microsoft.Extensions.Logging;
 using yamvu.core;
 using yamvu.core.Primitives;
 
 
-namespace CounterMvu_lib;
+namespace CounterSample.AppCore.Mvu;
 
 public static partial class EffectDispatcher {
    public static Task DispatchToExecutorAsync(IEffects executor, IMvuEffectCommand<IMvuEffect> effectCommand, ILogger? logger) {
