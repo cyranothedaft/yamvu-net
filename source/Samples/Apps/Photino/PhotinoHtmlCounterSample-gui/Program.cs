@@ -1,14 +1,11 @@
 ﻿using System;
 using System.Threading.Tasks;
-using CounterMvu_lib;
-using CounterMvu_lib.Effects;
-using CounterMvu_lib.Messages;
 using CounterSample.AppCore;
+using CounterSample.AppCore.Mvu;
 using CounterSample.AppCore.Services;
 using Microsoft.Extensions.Logging;
 using yamvu;
 using yamvu.core;
-using CounterProgram = CounterMvu_lib.Program.Program;
 
 
 namespace PhotinoHtmlCounterSample.gui;
@@ -19,6 +16,7 @@ internal static class Program {
    [STAThread]
    static void Main(string[] args) {
       using ILoggerFactory loggerFactory = buildLoggerFactory(LogLevel.Trace);
+
       ILogger appLogger = loggerFactory.CreateLogger("app");
       ILogger? servicesLogger = loggerFactory?.CreateLogger("svcs");
       ILogger? uiLogger = loggerFactory?.CreateLogger("ui");
@@ -34,8 +32,8 @@ internal static class Program {
       }
 
       ExternalMessageDispatcher externalMessageDispatcher = new();
-
-      PhotinoWindowForMvu.Build(Component.GetAsComponent(appServices, view, programLogger, loggerFactory),
+      MvuProgramComponent<Model, PhotinoView> mvuComponent = Component.GetAsComponent(appServices, view, programLogger, loggerFactory);
+      PhotinoWindowForMvu.Build(mvuComponent,
                                 externalMessageDispatcher,
                                 handleException,
                                 appLogger,

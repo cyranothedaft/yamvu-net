@@ -2,6 +2,6 @@
 using yamvu.core.Primitives;
 
 
-namespace CounterMvu_lib;
+namespace CounterSample.AppCore.Mvu;
 
 public interface ICounterMvuCommand : IMvuCommand;

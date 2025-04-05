@@ -1,5 +1,5 @@
 ﻿using System;
-using CounterMvu_lib;
+using CounterSample.AppCore.Mvu;
 using HtmlNodes;
 using Microsoft.Extensions.Logging;
 using yamvu.core;

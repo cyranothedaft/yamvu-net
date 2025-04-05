@@ -1,6 +1,6 @@
 ﻿using yamvu.core.Primitives;
 
 
-namespace CounterMvu_lib;
+namespace CounterSample.AppCore.Mvu;
 
 public abstract record Message : IMvuMessage;

@@ -1,6 +1,6 @@
 using System;
 using System.Threading.Tasks;
-using CounterMvu_lib.Effects;
+using CounterSample.AppCore.Mvu.Effects;
 using CounterSample.AppCore.Services;
 
 

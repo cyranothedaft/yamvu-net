@@ -1,4 +1,4 @@
-﻿using CounterMvu_lib;
+﻿using CounterSample.AppCore.Mvu;
 using yamvu.core;
 using yamvu.core.Primitives;
 

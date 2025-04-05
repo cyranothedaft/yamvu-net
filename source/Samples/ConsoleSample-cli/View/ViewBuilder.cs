@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Immutable;
-using CounterMvu_lib;
-using CounterMvu_lib.Messages;
+using CounterSample.AppCore.Mvu;
+using CounterSample.AppCore.Mvu.Messages;
 using Microsoft.Extensions.Logging;
 using yamvu.core;
 

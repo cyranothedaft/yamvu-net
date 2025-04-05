@@ -2,7 +2,7 @@
 using WelterKit.Std.StaticUtilities;
 
 
-namespace CounterMvu_lib.Messages;
+namespace CounterSample.AppCore.Mvu.Messages;
 
 
 public static partial class MvuMessages {

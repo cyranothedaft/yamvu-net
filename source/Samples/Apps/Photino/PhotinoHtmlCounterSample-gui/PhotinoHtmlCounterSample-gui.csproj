@@ -22,7 +22,6 @@
     <ProjectReference Include="..\..\..\..\Libraries\yamvu.core\yamvu.core.csproj" />
     <ProjectReference Include="..\..\..\..\Libraries\yamvu\yamvu.csproj" />
     <ProjectReference Include="..\..\..\ConsoleSampleMvu-lib\CounterAppCore-lib.csproj" />
-    <ProjectReference Include="..\..\..\CounterMvu-lib\CounterMvu-lib.csproj" />
   </ItemGroup>
 
 </Project>

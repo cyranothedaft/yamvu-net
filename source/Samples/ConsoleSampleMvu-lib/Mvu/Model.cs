@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace CounterMvu_lib;
+namespace CounterSample.AppCore.Mvu;
 
 public record Model(
       int Counter

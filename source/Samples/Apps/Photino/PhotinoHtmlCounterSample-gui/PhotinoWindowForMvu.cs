@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Drawing;
 using System.Threading.Tasks;
-using CounterMvu_lib.Messages;
+using CounterSample.AppCore.Mvu.Messages;
 using Microsoft.Extensions.Logging;
 using Photino.NET;
 using yamvu;

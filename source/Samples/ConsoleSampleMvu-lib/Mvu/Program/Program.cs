@@ -4,7 +4,7 @@ using yamvu.Runners;
 
 
 
-namespace CounterMvu_lib.Program;
+namespace CounterSample.AppCore.Mvu.Program;
 
 public static class Program {
    public const string Name = "CounterSample";

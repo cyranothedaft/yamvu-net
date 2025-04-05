@@ -1,8 +1,8 @@
 ﻿using System;
-using CounterMvu_lib;
-using CounterMvu_lib.Effects;
-using CounterMvu_lib.Messages;
-using CounterMvu_lib.Program;
+using CounterSample.AppCore.Mvu;
+using CounterSample.AppCore.Mvu.Effects;
+using CounterSample.AppCore.Mvu.Messages;
+using CounterSample.AppCore.Mvu.Program;
 using CounterSample.AppCore.Services;
 using Microsoft.Extensions.Logging;
 using yamvu;
