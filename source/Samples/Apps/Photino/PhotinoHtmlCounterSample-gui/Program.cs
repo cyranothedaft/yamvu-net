@@ -1,19 +1,18 @@
 ﻿using System;
-using Photino.NET;
 using System.Drawing;
 using System.IO;
-using System.Text;
 using System.Threading.Tasks;
 using CounterMvu_lib;
+using CounterMvu_lib.Effects;
 using CounterMvu_lib.Messages;
+using CounterSample.AppCore;
 using CounterSample.AppCore.Services;
 using Microsoft.Extensions.Logging;
+using Photino.NET;
 using yamvu;
 using yamvu.core;
-using yamvu.Runners;
-using CounterMvu_lib.Effects;
-using CounterSample.AppCore;
 using yamvu.core.Primitives;
+using yamvu.Runners;
 using CounterProgram = CounterMvu_lib.Program.Program;
 
 
@@ -33,7 +32,7 @@ internal static class Program {
 
       PhotinoWindow window = buildWindow();
       IMvuProgram2<Model, PhotinoView> mvuProgram = buildMvuProgram(loggerFactory);
-      IMvuProgramRunner<PhotinoView> mvuProgramRunner = buildMvuProgramRunner(window, appServices, externalMessageDispatcher, loggerFactory);
+      IMvuProgramRunner<PhotinoView> mvuProgramRunner = buildMvuProgramRunner(loggerFactory);
       attachMvuProgramToWindow(window, appServices, mvuProgramRunner, mvuProgram, externalMessageDispatcher,
                                exception => appLogger?.LogError(exception, "Application error"),
                                appLogger, loggerFactory);
@@ -56,6 +55,8 @@ internal static class Program {
                                        // Users can resize windows by default.
                                        // Let's make this one fixed instead.
                                       .SetResizable(false)
+                                      .SetContextMenuEnabled(false)
+                                      .SetDevToolsEnabled(false)
              // .RegisterDynamicScript()
              // .RegisterWebMessageHandler()
             ;
@@ -64,33 +65,14 @@ internal static class Program {
 
 
    private static IMvuProgram2<Model, PhotinoView> buildMvuProgram(ILoggerFactory? loggerFactory) {
-      IMvuProgram2<Model, PhotinoView> program = BuildMvuProgram(loggerFactory);
-      return program;
-   }
-
-   private static IMvuProgram2<Model, PhotinoView> BuildMvuProgram(ILoggerFactory? loggerFactory) {
-      IMvuProgram2<Model, PhotinoView> mvuProgram = CounterProgram.Build(ViewBuilder.BuildView, loggerFactory?.CreateLogger("prog"));
-      return mvuProgram;
+      ILogger? uiLogger = loggerFactory?.CreateLogger("ui");
+      ILogger? programLogger = loggerFactory?.CreateLogger("prog");
+      return CounterProgram.Build((dispatch, model) => ViewBuilder.BuildView(dispatch, model, uiLogger), programLogger);
    }
 
 
-   private static IMvuProgramRunner<PhotinoView> buildMvuProgramRunner(PhotinoWindow window, IAppServices services, ExternalMessageDispatcher? externalMessageDispatcher, ILoggerFactory? loggerFactory) {
-      IMvuProgramRunner<PhotinoView> program = BuildMvuProgramRunner(window, services, externalMessageDispatcher, loggerFactory);
-      return program;
-   }
-
-   private static IMvuProgramRunner<PhotinoView> BuildMvuProgramRunner(PhotinoWindow window, IAppServices appServices,
-                                                                                                            ExternalMessageDispatcher? externalMessageDispatcher, ILoggerFactory? loggerFactory
-
-         // Action<Exception> handleException
-   ) {
-
-      IMvuProgramRunner<PhotinoView> mvuProgramRunner = CounterProgram.BuildRunner<PhotinoView>(loggerFactory);
-
-
-      return mvuProgramRunner;
-
-   }
+   private static IMvuProgramRunner<PhotinoView> buildMvuProgramRunner(ILoggerFactory? loggerFactory)
+      => CounterProgram.BuildRunner<PhotinoView>(loggerFactory);
 
 
    private static void attachMvuProgramToWindow(PhotinoWindow window, IAppServices appServices, IMvuProgramRunner<PhotinoView> mvuProgramRunner, IMvuProgram2<Model, PhotinoView> mvuProgram,
@@ -106,9 +88,9 @@ internal static class Program {
       async void handleWebMessage(object? sender, string str) {
          try {
             appLogger?.LogTrace("### web message [{str}]", str);
-            if (str == "mvu:StartProgram") {
+            if (str == "StartMvuProgram") {
                window.WebMessageReceived -= handleWebMessage;
-               await runMvuProgramAsync();
+               await runMvuProgramAsync1();
             }
          }
          catch (Exception exception) {
@@ -116,9 +98,9 @@ internal static class Program {
          }
       }
 
-      async Task runMvuProgramAsync() {
+      async Task runMvuProgramAsync1() {
          appLogger?.LogTrace(">> MVU program");
-         await runMvuProgramAsync2(window, appServices, mvuProgramRunner, mvuProgram,
+         await runMvuProgramAsync(window, appServices, mvuProgramRunner, mvuProgram,
                                   externalMessageDispatcher, loggerFactory);
          appLogger?.LogTrace("<< MVU program");
 
@@ -130,30 +112,34 @@ internal static class Program {
    }
 
 
-   private static async Task runMvuProgramAsync2(PhotinoWindow window, IAppServices appServices, IMvuProgramRunner<PhotinoView> mvuProgramRunner, IMvuProgram2<Model, PhotinoView> mvuProgram,
-                                                 ExternalMessageDispatcher? externalMessageDispatcher, ILoggerFactory? loggerFactory) {
-      IEffects effectExecutor = new EffectExecutor (appServices);
-      Model finalModel = await ProgramRunnerWithBus.RunProgramWithCommonBusAsync(mvuProgramRunner, mvuProgram,
-                                                                                 updateView, buildView,
+   private static async Task<Model> runMvuProgramAsync(PhotinoWindow window, IAppServices appServices, IMvuProgramRunner<PhotinoView> mvuProgramRunner, IMvuProgram2<Model, PhotinoView> mvuProgram,
+                                                       ExternalMessageDispatcher? externalMessageDispatcher, ILoggerFactory? loggerFactory) {
+      ILogger? effectLogger = loggerFactory?.CreateLogger("fx");
+      IEffects effectExecutor = new EffectExecutor(appServices);
+      Model finalModel = await ProgramRunnerWithBus.RunProgramWithCommonBusAsync(mvuProgramRunner, mvuProgram, updateView1,
                                                                                  loggerFactory, externalMessageDispatcher, CounterProgram.Info,
-                                                                                 CounterProgram.MessageAsCommandFunc, effecuteEffect, CounterProgram.IsQuitMessageFunc);
+                                                                                 CounterProgram.MessageAsCommandFunc, executeEffect1, CounterProgram.IsQuitMessageFunc);
+      return finalModel;
+
+      void updateView1(PhotinoView view)
+         => updateView(window, view);
+
+      void executeEffect1(IMvuEffect effect, IHasEffectResultHandler hasresulthandler)
+         => executeEffect(effectExecutor, effect, hasresulthandler, effectLogger);
+   }
 
 
-      void updateView(PhotinoView view) {
-         window.SendWebMessage(view.HtmlFragment);
-      }
+   private static void updateView(PhotinoWindow window, PhotinoView view) {
+      string indexHtml = File.ReadAllText(Path.Combine(window.TemporaryFilesPath, "index.html")).Replace("==test==", view.HtmlFragment);
+      window.LoadRawString(indexHtml);
+      // window.SendWebMessage(view.HtmlFragment);
+   }
 
-      static PhotinoView buildView(MvuMessageDispatchDelegate dispatch, Model model, ILogger? uilogger)
-         => ViewBuilder.BuildView(dispatch, model);
 
-      void effecuteEffect(IMvuEffect effect, IHasEffectResultHandler hasresulthandler)
-         => executeEffect2(effectExecutor, effect, hasresulthandler, loggerFactory?.CreateLogger("fx"));
-
-      static void executeEffect2(IEffects effectExecutor, IMvuEffect effect, IHasEffectResultHandler resultHandler, ILogger? effectLogger) {
-         // TODO: await !!!
-         // this fires-and-forgets without proper exception trapping
-         EffectDispatcher.DispatchToExecutorAsync(effectExecutor, effect, resultHandler, effectLogger);
-      }
+   private static void executeEffect(IEffects effectExecutor, IMvuEffect effect, IHasEffectResultHandler resultHandler, ILogger? effectLogger) {
+      // TODO: await !!!
+      // this fires-and-forgets without proper exception trapping
+      EffectDispatcher.DispatchToExecutorAsync(effectExecutor, effect, resultHandler, effectLogger);
    }
 
 

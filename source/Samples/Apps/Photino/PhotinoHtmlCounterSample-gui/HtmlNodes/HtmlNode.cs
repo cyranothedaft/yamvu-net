@@ -15,7 +15,7 @@ public abstract record HtmlNode(params HtmlNode[] Children) {
 
 
 public record AttributeNode(string Name, string Value) : HtmlNode() {
-   public override string Render() => $"{Name}=\"{Value}\"";
+   public override string Render() => $" {Name}=\"{Value}\"";
 }
 
 
@@ -30,18 +30,21 @@ public record HtmlTag(
 ) : ContentNode(Children) {
    public override string Render()
       => CanSelfClose && Children.Length == 0
-               ? string.Format("<{0} />",            TagName)
-               : string.Format("<{0} {1}>{2}</{3}>", TagName,
-                                                     renderMultiple(Children.OfType<AttributeNode>()),
-                                                     renderMultiple(Children.OfType<ContentNode>()),
-                                                     TagName);
-
-
-   private static string renderMultiple(IEnumerable<HtmlNode> nodes)
-      => string.Concat(nodes.Select(a => a.Render()));
+               ? string.Format("<{0} />",           TagName)
+               : string.Format("<{0}{1}>{2}</{3}>", TagName,
+                                                    Children.OfType<AttributeNode>().Render(),
+                                                    Children.OfType<ContentNode>().Render(),
+                                                    TagName);
 }
 
 
 public record TextNode(string Text) : ContentNode() {
    public override string Render() => Text;
+}
+
+
+
+public static class HtmlNodeExtensions {
+   public static string Render(this IEnumerable<HtmlNode> nodes)
+      => string.Concat(nodes.Select(n => n.Render()));
 }

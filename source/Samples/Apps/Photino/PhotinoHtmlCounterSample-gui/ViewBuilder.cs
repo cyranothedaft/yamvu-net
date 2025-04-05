@@ -1,11 +1,7 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Collections.Immutable;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using CounterMvu_lib;
 using HtmlNodes;
+using Microsoft.Extensions.Logging;
 using yamvu.core;
 
 
@@ -14,36 +10,24 @@ namespace PhotinoHtmlCounterSample.gui;
 
 
 internal static class ViewBuilder {
-   public static PhotinoView BuildView(MvuMessageDispatchDelegate dispatch, Model model)
+   public static PhotinoView BuildView(MvuMessageDispatchDelegate dispatch, Model model, ILogger? uilogger)
       => new PhotinoView(buildHtml(model));
-                             
-                             
-                             
-//                             $"""
-//                              <script>
-//                                  var mvudiv = document.getElementById('mvudiv');
-//
-//                                  function increment1() {
-//                                      window.external.sendMessage('mvu:StartProgram');
-//                                  }
-//
-//                                  // window.external.receiveMessage(message => alert(message));
-//
-//                                  window.external.receiveMessage(message => {
-//                                      mvudiv.innerHTML = message;
-//                                  });
-//                              </script>
-//                              <p>Counter: {model.Counter}</p>
-//                              <button class="primary center" onclick="increment1()">Increment (1)</button>
-//                              """);// TODO
-   //
 
+
+   private const string ViewScript = """
+                                     function increment1() {
+                                         window.external.sendMessage('event:increment1');
+                                     }
+                                     """;
 
    private static string buildHtml(Model model)
-      => string.Concat(Script().Render(),
-                       P($"Counter: ", Span(model.Counter.ToString())).Render(),
-                       Button(@class("primary center")).Render()
-                      );
+      => new[]
+            {
+               Script(ViewScript),
+               P($"Counter: ", Span(model.Counter.ToString())),
+               Button("Increment (1)", @class("primary center"), onclick("increment1()"))
+            }
+           .Render();
 
    // like this:  https://github.com/codechem/CC.CSX?tab=readme-ov-file
 
@@ -52,7 +36,8 @@ internal static class ViewBuilder {
    private static HtmlNode Script(params HtmlNode[] contents) => new HtmlTag(contents, "script", CanSelfClose: false);
    private static HtmlNode Span  (params HtmlNode[] contents) => new HtmlTag(contents, "span"  , CanSelfClose: false);
 
-   private static AttributeNode @class(string contents) => new AttributeNode("class", contents);
+   private static AttributeNode @class(string value) => new AttributeNode("class", value);
+   private static AttributeNode onclick(string value) => new AttributeNode("onclick", value);
 
    // private static ScriptNode Script() => new ScriptNode();
    // private static      PNode P()      => new PNode();

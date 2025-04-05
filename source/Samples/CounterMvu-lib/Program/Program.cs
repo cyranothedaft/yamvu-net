@@ -17,8 +17,8 @@ public static class Program {
    public static Func<IMvuMessage, bool> IsQuitMessageFunc => msg => msg is Request_QuitMessage;
 
 
-   public static IMvuProgram2<Model, TView> Build<TView>(ViewDelegate<Model, TView> viewFunc, ILogger? logger)
-      => new ProgramWithView<TView>(new ProgramUpdate(logger), viewFunc);
+   public static IMvuProgram2<Model, TView> Build<TView>(ViewDelegate<Model, TView> viewFunc, ILogger? programLogger)
+      => new ProgramWithView<TView>(new ProgramUpdate(programLogger), viewFunc);
 
 
    public static IMvuProgramRunner<TView> BuildRunner<TView>(ILoggerFactory? loggerFactory)

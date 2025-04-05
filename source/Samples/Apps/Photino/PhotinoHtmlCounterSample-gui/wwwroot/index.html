@@ -20,15 +20,13 @@
         <button class="primary center" onclick="startMvuProgram()">Start MVU Program</button>
     </div>
 
+    <div>==test==</div>
+
     <script>
         var mvudiv = document.getElementById('mvudiv');
 
-        // function callDotNet() {
-        //     window.external.sendMessage('Hi .NET! 🤖');
-        // }
-
         function startMvuProgram() {
-            window.external.sendMessage('mvu:StartProgram');
+            window.external.sendMessage('StartMvuProgram');
         }
 
         // window.external.receiveMessage(message => alert(message));

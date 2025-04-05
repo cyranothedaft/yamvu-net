@@ -16,7 +16,7 @@ public delegate TView ViewFuncDelegate<in TModel, out TView>(MvuMessageDispatchD
 public class ProgramRunnerWithBus {
 
    public static async Task<TModel> RunProgramWithCommonBusAsync<TModel, TView>(IMvuProgramRunner<TView> programRunner, IMvuProgram2<TModel, TView> program,
-                                                                                Action<TView> replaceViewAction, ViewFuncDelegate<TModel, TView> viewFunc, ILoggerFactory? loggerFactory,
+                                                                                Action<TView> replaceViewAction, ILoggerFactory? loggerFactory,
                                                                                 ExternalMessageDispatcher? externalMessageDispatcher,
                                                                                 ProgramInfo programInfo, Func<IMvuMessage, IMvuCommand> messageAsCommand,
                                                                                 ExecuteEffectDelegate<IMvuEffect> executeEffectAction, Func<IMvuMessage, bool> isQuitMessage) {
