@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Drawing;
-using System.IO;
 using System.Threading.Tasks;
 using CounterMvu_lib;
 using CounterMvu_lib.Effects;
@@ -82,23 +81,22 @@ internal static class Program {
                                  externalMessageDispatcher.Dispatch(MvuMessages.Request_Quit());
                                  return false; // let it close
                               };
-      window.WebMessageReceived += handleWebMessage;
+
+      window.RegisterWebMessageReceivedHandler(handleWebMessage);
 
       return;
 
-      async void handleWebMessage(object? sender, string str) {
+      async void handleWebMessage(object? sender, string message) {
          try {
-            appLogger?.LogTrace("### web message [{str}]", str);
-            if (str == "StartMvuProgram") {
+            appLogger?.LogTrace("### web message [{str}]", message);
+            if (message == "StartMvuProgram") {
                await runMvuProgramAsync1();
             }
-            else if (str.StartsWith("msg:")) {
-               externalMessageDispatcher.Dispatch(str[4..] switch
-                  {
-                     "increment1"      => MvuMessages.Request_Increment1(),
-                     "incrementrandom" => MvuMessages.Request_IncrementRandom(),
-                     _                 => throw new ArgumentOutOfRangeException()
-                  });
+            else if (message.StartsWith("msg:")) {
+               switch (message[4..]) {
+                  case "increment1":      externalMessageDispatcher.Dispatch(MvuMessages.Request_Increment1()); break;
+                  case "incrementrandom": externalMessageDispatcher.Dispatch(MvuMessages.Request_IncrementRandom()); break;
+               }
             }
          }
          catch (Exception exception) {
@@ -138,8 +136,6 @@ internal static class Program {
 
 
    private static void updateView(PhotinoWindow window, PhotinoView view) {
-      // string indexHtml = File.ReadAllText(Path.Combine(window.TemporaryFilesPath, "index.html")).Replace("==test==", view.HtmlFragment);
-      // window.LoadRawString(indexHtml);
       window.SendWebMessage(view.HtmlFragment);
    }
 
