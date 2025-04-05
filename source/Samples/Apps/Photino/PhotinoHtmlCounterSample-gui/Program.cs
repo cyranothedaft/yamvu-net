@@ -37,7 +37,6 @@ internal static class Program {
                                exception => appLogger?.LogError(exception, "Application error"),
                                appLogger, loggerFactory);
       runWindow(window);
-
    }
 
 
@@ -76,21 +75,30 @@ internal static class Program {
 
 
    private static void attachMvuProgramToWindow(PhotinoWindow window, IAppServices appServices, IMvuProgramRunner<PhotinoView> mvuProgramRunner, IMvuProgram2<Model, PhotinoView> mvuProgram,
-                                                ExternalMessageDispatcher? externalMessageDispatcher, Action<Exception> handleException,
+                                                ExternalMessageDispatcher externalMessageDispatcher, Action<Exception> handleException,
                                                 ILogger? appLogger, ILoggerFactory? loggerFactory) {
       window.WindowClosing += (sender, args) => {
                                  appLogger?.LogTrace("# WindowClosing");
-                                 externalMessageDispatcher?.Dispatch(MvuMessages.Request_Quit());
+                                 externalMessageDispatcher.Dispatch(MvuMessages.Request_Quit());
                                  return false; // let it close
                               };
       window.WebMessageReceived += handleWebMessage;
+
+      return;
 
       async void handleWebMessage(object? sender, string str) {
          try {
             appLogger?.LogTrace("### web message [{str}]", str);
             if (str == "StartMvuProgram") {
-               window.WebMessageReceived -= handleWebMessage;
                await runMvuProgramAsync1();
+            }
+            else if (str.StartsWith("msg:")) {
+               externalMessageDispatcher.Dispatch(str[4..] switch
+                  {
+                     "increment1"      => MvuMessages.Request_Increment1(),
+                     "incrementrandom" => MvuMessages.Request_IncrementRandom(),
+                     _                 => throw new ArgumentOutOfRangeException()
+                  });
             }
          }
          catch (Exception exception) {
@@ -130,9 +138,9 @@ internal static class Program {
 
 
    private static void updateView(PhotinoWindow window, PhotinoView view) {
-      string indexHtml = File.ReadAllText(Path.Combine(window.TemporaryFilesPath, "index.html")).Replace("==test==", view.HtmlFragment);
-      window.LoadRawString(indexHtml);
-      // window.SendWebMessage(view.HtmlFragment);
+      // string indexHtml = File.ReadAllText(Path.Combine(window.TemporaryFilesPath, "index.html")).Replace("==test==", view.HtmlFragment);
+      // window.LoadRawString(indexHtml);
+      window.SendWebMessage(view.HtmlFragment);
    }
 
 

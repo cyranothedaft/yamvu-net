@@ -14,18 +14,22 @@ internal static class ViewBuilder {
       => new PhotinoView(buildHtml(model));
 
 
-   private const string ViewScript = """
-                                     function increment1() {
-                                         window.external.sendMessage('event:increment1');
-                                     }
-                                     """;
+   // private const string ViewScript = """
+   //                                   function increment1() {
+   //                                       ;
+   //                                   }
+   //                                   function incrementRandom() {
+   //                                       ;
+   //                                   }
+   //                                   """;
 
    private static string buildHtml(Model model)
       => new[]
             {
-               Script(ViewScript),
+               // Script(ViewScript),
                P($"Counter: ", Span(model.Counter.ToString())),
-               Button("Increment (1)", @class("primary center"), onclick("increment1()"))
+               Button("Increment (1)", @class("primary center"), onclick("window.external.sendMessage('msg:increment1')")),
+               Button("Increment (Random)", @class("primary center"), onclick("window.external.sendMessage('msg:incrementrandom')")),
             }
            .Render();
 
