@@ -1,11 +1,11 @@
 ﻿using System;
-using CounterMvu_lib.Messages;
+using CounterSample.AppCore.Mvu.Messages;
 using Microsoft.Extensions.Logging;
 using yamvu.core;
 using yamvu.core.Primitives;
 
 
-namespace CounterMvu_lib.Program;
+namespace CounterSample.AppCore.Mvu.Program;
 
 public class ProgramUpdate : IMvuProgramUpdatable<Model> {
    private readonly ILogger? _logger;

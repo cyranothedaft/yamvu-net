@@ -2,13 +2,13 @@
 
   <PropertyGroup>
     <TargetFramework>net8.0</TargetFramework>
-    <RootNamespace>CounterMvu_lib_test</RootNamespace>
+    <RootNamespace>CounterSample.AppCore.Mvu_test</RootNamespace>
     <UseVSTest>true</UseVSTest>
   </PropertyGroup>
 
   <ItemGroup>
     <ProjectReference Include="..\..\..\Libraries\yamvu.Testing\yamvu.Testing.csproj" />
-    <ProjectReference Include="..\..\CounterMvu-lib\CounterMvu-lib.csproj" />
+    <ProjectReference Include="..\..\ConsoleSampleMvu-lib\CounterAppCore-lib.csproj" />
   </ItemGroup>
 
   <ItemGroup>

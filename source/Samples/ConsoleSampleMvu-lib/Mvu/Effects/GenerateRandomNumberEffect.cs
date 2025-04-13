@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Threading.Tasks;
 using CounterMvu;
 using Microsoft.Extensions.Logging;
 using WelterKit.Std.StaticUtilities;
@@ -6,7 +7,7 @@ using yamvu.core;
 using yamvu.core.Primitives;
 
 
-namespace CounterMvu_lib.Effects;
+namespace CounterSample.AppCore.Mvu.Effects;
 
 
 using ResultType = int;

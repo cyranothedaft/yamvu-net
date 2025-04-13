@@ -2,7 +2,7 @@
 using yamvu.core.Primitives;
 
 
-namespace CounterMvu_lib;
+namespace CounterSample.AppCore.Mvu;
 
 public static class MessageExtensions {
    public static MvuMessageCommand AsCommand(this IMvuMessage message)

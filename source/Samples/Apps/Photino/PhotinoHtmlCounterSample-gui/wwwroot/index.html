@@ -1,0 +1,41 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sample Photino HTML MVU App</title>
+    <link rel="stylesheet" href="assets/main.css" />
+</head>
+<body>
+    <img src="assets/photino-logo-full.png" alt="Photino" class="logo center" />
+
+    <h1 class="text-center">Sample Photino HTML MVU App</h1>
+
+    <div id="mvudiv">
+        <p class="text-center">
+            - Initializing -
+        </p>
+        <!-- <button class="primary center" onclick="callDotNet()">Call .NET</button> -->
+        <button class="primary center" onclick="startMvuProgram()">Start MVU Program</button>
+    </div>
+
+    <script>
+        var mvudiv = document.getElementById('mvudiv');
+
+        function startMvuProgram() {
+            window.external.sendMessage('StartMvuProgram');
+        }
+
+        function sendMessage(msg) {
+            window.external.sendMessage('msg:' + msg);
+        }
+
+        // window.external.receiveMessage(message => alert(message));
+
+        window.external.receiveMessage(message => {
+            mvudiv.innerHTML = message;
+        });
+    </script>
+</body>
+</html>

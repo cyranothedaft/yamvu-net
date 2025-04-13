@@ -83,7 +83,7 @@ public class ProgramRunner2<TCmd, TView> : IMvuProgramRunner<TView> where TCmd :
                                                             EmitViewDelegate<TView>? recordView = null,
                                                             Func<TView, bool>? queryTerminationAndSimulateInput = null,
                                                             IMvuCommand[]? initialCommands = null,
-                                                            ExternalMessageDispatcher? messageFromOutsideDispatcher = null,
+                                                            ExternalMessageDispatcher? externalMessageDispatcher = null,
                                                             TimeSpan? taskTimeout = default,
                                                             ILogger? busLogger = null,
                                                             ILogger? runWrapperLogger = null) 
@@ -118,7 +118,7 @@ public class ProgramRunner2<TCmd, TView> : IMvuProgramRunner<TView> where TCmd :
                                                         isQuitMessage,
                                                         queryTerminationAndSimulateInput,
                                                         initialCommands,
-                                                        messageFromOutsideDispatcher,
+                                                        externalMessageDispatcher,
                                                         programCancellationToken);
 
    }
