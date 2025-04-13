@@ -12,6 +12,8 @@ Made from scratch using only the freshest organic ingredients (blood, sweat, tea
 
   https://www.nuget.org/packages/yamvu/
 
+  `dotnet add package yamvu --version 0.2.0-beta`
+
 - ### yamvu.Core
 
   Core MVU types and abstractions.
@@ -20,6 +22,8 @@ Made from scratch using only the freshest organic ingredients (blood, sweat, tea
 
   https://www.nuget.org/packages/yamvu.Core/
 
+  `dotnet add package yamvu.Core --version 0.2.0-beta`
+
 - ### yamvu.Testing
 
   Utilities to aid with automated testing / unit tests.
@@ -27,6 +31,8 @@ Made from scratch using only the freshest organic ingredients (blood, sweat, tea
   _Targets .NET 8.0_.
 
   https://www.nuget.org/packages/yamvu.Testing/
+
+  `dotnet add package yamvu.Testing --version 0.2.0-beta`
 
 
 
