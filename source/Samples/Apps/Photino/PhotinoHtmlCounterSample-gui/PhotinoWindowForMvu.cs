@@ -65,8 +65,8 @@ internal static class PhotinoWindowForMvu {
 
       async Task runMvuProgramAsync1() {
          appLogger?.LogTrace(">> MVU program");
-         await ProgramRunnerWithBus.RunProgramWithCommonBusAsync(mvuProgramComponent.ProgramRunner, 
-                                                                 mvuProgramComponent.Program, 
+         await ProgramRunnerWithBus.RunProgramWithCommonBusAsync(mvuProgramComponent.BuildProgramRunner, 
+                                                                 mvuProgramComponent.BuildProgram, 
                                                                  view => updateView(window, view),
                                                                  loggerFactory, 
                                                                  externalMessageDispatcher, 
