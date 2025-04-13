@@ -7,8 +7,8 @@ using yamvu.Runners;
 namespace yamvu;
 
 public record MvuProgramComponent<TModel, TView>(
-      IMvuProgram2<TModel, TView> Program,
-      IMvuProgramRunner<TView> ProgramRunner,
+      Func<IMvuProgram2<TModel, TView>> BuildProgram,
+      Func<IMvuProgramRunner<TView>> BuildProgramRunner,
       ProgramInfo ProgramInfo,
       Func<IMvuMessage, IMvuCommand> MessageAsCommandFunc,
       Func<IMvuMessage, bool> IsQuitMessageFunc,

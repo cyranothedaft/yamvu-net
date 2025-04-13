@@ -3,8 +3,12 @@ using ConsoleSample.UIBasics;
 using ConsoleSample.View;
 using ConsoleSample.ViewPlatform;
 using CounterSample.AppCore;
+using CounterSample.AppCore.Mvu;
+using CounterSample.AppCore.Services;
 using Microsoft.Extensions.Logging;
 using yamvu;
+using yamvu.core;
+using yamvu.Runners;
 
 
 
@@ -19,6 +23,8 @@ internal static class EntryPoint {
       ILogger  uiLogger = loggerFactory.CreateLogger("ui");
       ILogger inpLogger = loggerFactory.CreateLogger("inp");
       ILogger appLogger = loggerFactory.CreateLogger("app");
+      ILogger servicesLogger = loggerFactory.CreateLogger("svcs");
+      ILogger programLogger = loggerFactory.CreateLogger("prod");
 
 
       ProgramEventSources programInputSources = new(inpLogger);
@@ -43,12 +49,13 @@ internal static class EntryPoint {
       using var viewPlatform = new ScrollingConsoleViewPlatform(handleAppKeyPressAndRaiseProgramKeyEvent, inpLogger, uiLogger);
 
       ExternalMessageDispatcher externalMessageDispatcher = new();
-      ProgramRunnerWithServices<PlatformView<ProgramView>> programRunnerWithServices = ProgramRunnerWithServices<PlatformView<ProgramView>>.Build(//programInputSources,
-                                                                                                                                                  // loggers: (appLogger, svcLogger, runLogger, prgLogger, fxLogger, busLogger)
-                                                                                                                                                  externalMessageDispatcher,
-                                                                                                                                                  loggerFactory
-                                                                                                                                                 );
+      IAppServices appServices = new AppServices_Real(servicesLogger);
 
+      PlatformView<ProgramView> createView(MvuMessageDispatchDelegate dispatch, Model model)
+         => ViewBuilder.BuildViewFromModel(dispatch, model, uiLogger);
+
+      MvuProgramComponent<Model, PlatformView<ProgramView>> mvuComponent = Component.GetAsComponent(appServices, createView, programLogger, loggerFactory);
+   
       appLogger?.LogInformation("Started, running program to completion...");
       try {
          // start receiving input
@@ -58,9 +65,18 @@ internal static class EntryPoint {
          ViewRenderer.DisplayView(ViewBuilder.BuildInitialView(), updateBindings);
 
          // run the program until it terminates
-         await programRunnerWithServices.RunProgramWithCommonBusAsync(replaceViewAction: platformView => ViewRenderer.DisplayView(platformView, updateBindings),
-                                                                      viewFunc: ViewBuilder.BuildViewFromModel,
-                                                                      loggerFactory);
+      Model finalModel = await ProgramRunnerWithBus.RunProgramWithCommonBusAsync(mvuComponent.BuildProgramRunner,
+                                                                                 mvuComponent.BuildProgram,
+                                                                                 replaceViewAction: platformView => ViewRenderer.DisplayView(platformView, updateBindings),
+                                                                                 loggerFactory,
+                                                                                 externalMessageDispatcher,
+                                                                                 mvuComponent.ProgramInfo,
+                                                                                 mvuComponent.MessageAsCommandFunc,
+                                                                                 mvuComponent.ExecuteEffectDelegate,
+                                                                                 mvuComponent.IsQuitMessageFunc);
+         // await programRunnerWithServices.RunProgramWithCommonBusAsync(,
+         //                                                              ,
+         //                                                              loggerFactory);
 
          appLogger?.LogInformation("Program terminated normally - application will now end.");
       }
@@ -69,4 +85,6 @@ internal static class EntryPoint {
          await Console.Error.WriteLineAsync(exception.ToString());
       }
    }
+
+
 }

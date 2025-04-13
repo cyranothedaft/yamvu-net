@@ -1,10 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Runtime.InteropServices.WindowsRuntime;
+﻿using CounterSample.AppCore;
+using CounterSample.AppCore.Mvu;
+using CounterSample.AppCore.Mvu.Messages;
+using CounterSample.AppCore.Services;
 using Microsoft.Extensions.Logging;
-using System.Threading.Tasks;
 using Microsoft.UI.Xaml;
 using Microsoft.UI.Xaml.Controls;
 using Microsoft.UI.Xaml.Controls.Primitives;
@@ -13,15 +11,21 @@ using Microsoft.UI.Xaml.Input;
 using Microsoft.UI.Xaml.Media;
 using Microsoft.UI.Xaml.Navigation;
 using Microsoft.UI.Xaml.Shapes;
+using System;
+using System.Collections.Generic;
+using System.Diagnostics.Metrics;
+using System.IO;
+using System.Linq;
+using System.Runtime.InteropServices.WindowsRuntime;
+using System.Threading.Tasks;
 using Windows.ApplicationModel;
 using Windows.ApplicationModel.Activation;
 using Windows.Foundation;
 using Windows.Foundation.Collections;
-using CounterSample.AppCore;
-using yamvu;
 using WinUI3CounterSample.View;
-using System.Diagnostics.Metrics;
-using CounterMvu_lib.Messages;
+using yamvu;
+using yamvu.core;
+using yamvu.Runners;
 
 
 
@@ -74,7 +78,7 @@ public partial class App : Application {
 
             // windows is activated, so start (asynchronously run) the MVU program
             await runMvuProgramAsync(externalMessageDispatcher,
-                                     viewEmittedCallback: view => replaceMvuComponents(window.MvuComponentContainer, view),
+                                     replaceViewAction: view => replaceMvuComponents(window.MvuComponentContainer, view),
                                      loggerFactory);
 
             // the MVU program has terminated normally, so signal the window to close
@@ -96,14 +100,30 @@ public partial class App : Application {
    }
 
 
-   private static async Task runMvuProgramAsync(ExternalMessageDispatcher? externalMessageDispatcher, Action<PlatformView<ProgramView>> viewEmittedCallback,
+   private static async Task runMvuProgramAsync(ExternalMessageDispatcher? externalMessageDispatcher, Action<PlatformView<ProgramView>> replaceViewAction,
                                                 ILoggerFactory? loggerFactory) {
-      var programRunnerWithServices = ProgramRunnerWithServices<PlatformView<ProgramView>>.Build(externalMessageDispatcher, loggerFactory);
+      ILogger? servicesLogger = loggerFactory?.CreateLogger("svcs");
+      ILogger? uiLogger = loggerFactory?.CreateLogger("ui");
+      ILogger? programLogger = loggerFactory?.CreateLogger("prog");
+      IAppServices appServices = new AppServices_Real(servicesLogger);
+
+      PlatformView<ProgramView> view(MvuMessageDispatchDelegate dispatch, Model model)
+         => ViewBuilder.BuildViewFromModel(dispatch, model, uiLogger);
+
+      MvuProgramComponent<Model, PlatformView<ProgramView>> mvuComponent = Component.GetAsComponent(appServices, view, programLogger, loggerFactory);
+
+      // var programRunnerWithServices = ProgramRunnerWithServices<PlatformView<ProgramView>>.Build(externalMessageDispatcher, loggerFactory);
 
       // run the program until it terminates
-      await programRunnerWithServices.RunProgramWithCommonBusAsync(replaceViewAction: viewEmittedCallback,
-                                                                   viewFunc: ViewBuilder.BuildViewFromModel,
-                                                                   loggerFactory);
+      var finalModel = await ProgramRunnerWithBus.RunProgramWithCommonBusAsync(mvuComponent.BuildProgramRunner,
+                                                                               mvuComponent.BuildProgram,
+                                                                               replaceViewAction,
+                                                                               loggerFactory,
+                                                                               externalMessageDispatcher,
+                                                                               mvuComponent.ProgramInfo,
+                                                                               mvuComponent.MessageAsCommandFunc,
+                                                                               mvuComponent.ExecuteEffectDelegate,
+                                                                               mvuComponent.IsQuitMessageFunc);
    }
 
 
