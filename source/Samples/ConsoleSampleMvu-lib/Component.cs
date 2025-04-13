@@ -16,8 +16,8 @@ public static class Component {
                                                                          ILogger? programLogger, ILoggerFactory? loggerFactory) {
       IEffects effectExecutor = new EffectExecutor(appServices);
       ILogger? effectLogger = loggerFactory?.CreateLogger("fx");
-      return new MvuProgramComponent<Model, TView>(Program.Build(viewFunc, programLogger),
-                                                   Program.BuildRunner<TView>(loggerFactory),
+      return new MvuProgramComponent<Model, TView>(() => Program.Build(viewFunc, programLogger),
+                                                   () => Program.BuildRunner<TView>(loggerFactory),
                                                    Program.Info,
                                                    MessageExtensions.AsCommand,
                                                    message => message is Request_QuitMessage,

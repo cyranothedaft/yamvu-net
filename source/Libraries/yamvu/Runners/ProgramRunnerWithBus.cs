@@ -15,7 +15,8 @@ public delegate TView ViewFuncDelegate<in TModel, out TView>(MvuMessageDispatchD
 
 public class ProgramRunnerWithBus {
 
-   public static async Task<TModel> RunProgramWithCommonBusAsync<TModel, TView>(IMvuProgramRunner<TView> programRunner, IMvuProgram2<TModel, TView> program,
+   public static async Task<TModel> RunProgramWithCommonBusAsync<TModel, TView>(Func<IMvuProgramRunner<TView>> buildProgramRunner,
+                                                                                Func<IMvuProgram2<TModel, TView>> buildProgram,
                                                                                 Action<TView> replaceViewAction, ILoggerFactory? loggerFactory,
                                                                                 ExternalMessageDispatcher? externalMessageDispatcher,
                                                                                 ProgramInfo programInfo, Func<IMvuMessage, IMvuCommand> messageAsCommand,
@@ -24,14 +25,16 @@ public class ProgramRunnerWithBus {
       ILogger? busLogger = loggerFactory?.CreateLogger("bus");
       ILogger? runWrapperLogger = loggerFactory?.CreateLogger("wrap");
 
+      IMvuProgramRunner<TView> programRunner = buildProgramRunner();
       programRunner.ViewEmitted += (view, isInitialView) => {
-                                       replaceViewAction(view);
-                                    };
+                                      replaceViewAction(view);
+                                   };
       hostLogger?.LogTrace("Attached ViewEmitted event");
 
       CancellationToken busCancellationToken     = new();
       CancellationToken programCancellationToken = new();
 
+      IMvuProgram2<TModel, TView> program = buildProgram();
       TModel finalModel = await ProgramRunner2<IMvuCommand, TView>.RunWithBusAsync(program, programInfo, programRunner,
                                                                                    messageAsCommand, executeEffectAction, isQuitMessage,
                                                                                    busCancellationToken, programCancellationToken,
