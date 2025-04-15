@@ -13,11 +13,11 @@ namespace CounterSample.AppCore;
 
 public static class Component {
    public static MvuProgramComponent<Model, TView> GetAsComponent<TView>(IAppServices appServices, ViewDelegate<Model, TView> viewFunc,
-                                                                         ILogger? programLogger, ILoggerFactory? loggerFactory) {
+                                                                         ILogger? programLogger, Func<string, ILogger?> createLoggerFunc) {
       IEffects effectExecutor = new EffectExecutor(appServices);
-      ILogger? effectLogger = loggerFactory?.CreateLogger("fx");
+      ILogger? effectLogger = createLoggerFunc("fx");
       return new MvuProgramComponent<Model, TView>(() => Program.Build(viewFunc, programLogger),
-                                                   () => Program.BuildRunner<TView>(loggerFactory),
+                                                   () => Program.BuildRunner<TView>(createLoggerFunc),
                                                    Program.Info,
                                                    MessageExtensions.AsCommand,
                                                    message => message is Request_QuitMessage,

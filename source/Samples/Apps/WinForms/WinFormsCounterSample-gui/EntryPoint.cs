@@ -19,7 +19,6 @@ using yamvu.Runners;
 namespace WinFormsCounterSample.gui;
 
 internal static class EntryPoint {
-   private static ILoggerFactory? _loggerFactory = null;
    private static ILogger? _globalAppLogger = null;
 
 
@@ -31,25 +30,26 @@ internal static class EntryPoint {
       ApplicationConfiguration.Initialize();
 
       const LogLevel minimumLogLevel = LogLevel.Trace;
-      using ( _loggerFactory = LoggerFactory.Create(builder => builder.AddDebug()
+      using ( ILoggerFactory? loggerFactory = LoggerFactory.Create(builder => builder.AddDebug()
                                                                       .SetMinimumLevel(minimumLogLevel))) {
-         _globalAppLogger = _loggerFactory?.CreateLogger("main");
+         _globalAppLogger = loggerFactory?.CreateLogger("main");
          MainForm mainForm = new MainForm();
 
-         embedMvuProgramInContainer(mainForm);
+         embedMvuProgram1InContainer(mainForm.Program1Container, category => loggerFactory?.CreateLogger("[1]" + category));
          Application.Run(mainForm);
       }
    }
 
 
-   private static void embedMvuProgramInContainer(IMvuControlContainer container) {
+   private static void embedMvuProgram1InContainer(IMvuControlContainer container, Func<string, ILogger?> createLoggerFunc) {
       ExternalMessageDispatcher externalMessageDispatcher = new();
 
       async void onLoadRunMvuProgram(object? sender, EventArgs e) {
          try {
             // form has loaded, so start (asynchronously run) the MVU program
-            await runMvuProgramAsync(externalMessageDispatcher,
-                                     replaceViewAction: view => replaceMvuComponents(container.MvuComponentContainer, view));
+            await runMvuProgram1Async(externalMessageDispatcher,
+                                      replaceViewAction: view => replaceMvuComponents(container.ContainerControl, view),
+                                      createLoggerFunc);
 
             // the MVU program has terminated normally, so signal the form to close
             container.Close();
@@ -65,25 +65,27 @@ internal static class EntryPoint {
          externalMessageDispatcher.Dispatch(MvuMessages.Request_Quit());
       }
 
+      // TODO: have an "un-embed" method that unsubscribes these
       container.ContainerLoaded  += onLoadRunMvuProgram;
       container.ContainerClosing += onClosingStopMvuProgram;
    }
 
 
-   private static async Task runMvuProgramAsync(ExternalMessageDispatcher? externalMessageDispatcher, Action<PlatformView<ProgramView>> replaceViewAction) {
-      ILogger? uiLogger = _loggerFactory?.CreateLogger("ui");
-      ILogger? servicesLogger = _loggerFactory?.CreateLogger("svcs");
+   private static async Task runMvuProgram1Async(ExternalMessageDispatcher? externalMessageDispatcher, Action<PlatformView<ProgramView>> replaceViewAction,
+                                                 Func<string, ILogger?> createLoggerFunc) {
+      ILogger? uiLogger       = createLoggerFunc("ui");
+      ILogger? servicesLogger = createLoggerFunc("svcs");
       IAppServices appServices = new AppServices_Real(servicesLogger);
 
       PlatformView<ProgramView> view(MvuMessageDispatchDelegate dispatch, Model model)
          => ViewBuilder.BuildViewFromModel(dispatch, model, uiLogger);
 
-      MvuProgramComponent<Model, PlatformView<ProgramView>> mvuComponent = Component.GetAsComponent(appServices, view, _loggerFactory?.CreateLogger("prog"), _loggerFactory);
+      MvuProgramComponent<Model, PlatformView<ProgramView>> mvuComponent = Component.GetAsComponent(appServices, view, createLoggerFunc("prog"), createLoggerFunc);
       // var programRunnerWithServices = ProgramRunnerWithServices<PlatformView<ProgramView>>.Build(externalMessageDispatcher, _loggerFactory);
       var finalModel = await ProgramRunnerWithBus.RunProgramWithCommonBusAsync(mvuComponent.BuildProgramRunner,
                                                                                mvuComponent.BuildProgram,
                                                                                replaceViewAction,
-                                                                               _loggerFactory,
+                                                                               createLoggerFunc,
                                                                                externalMessageDispatcher,
                                                                                mvuComponent.ProgramInfo,
                                                                                mvuComponent.MessageAsCommandFunc,

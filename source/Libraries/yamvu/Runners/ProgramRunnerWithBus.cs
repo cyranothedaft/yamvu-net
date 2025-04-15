@@ -17,13 +17,14 @@ public class ProgramRunnerWithBus {
 
    public static async Task<TModel> RunProgramWithCommonBusAsync<TModel, TView>(Func<IMvuProgramRunner<TView>> buildProgramRunner,
                                                                                 Func<IMvuProgram2<TModel, TView>> buildProgram,
-                                                                                Action<TView> replaceViewAction, ILoggerFactory? loggerFactory,
+                                                                                Action<TView> replaceViewAction,
+                                                                                Func<string, ILogger?> createLoggerFunc,
                                                                                 ExternalMessageDispatcher? externalMessageDispatcher,
                                                                                 ProgramInfo programInfo, Func<IMvuMessage, IMvuCommand> messageAsCommand,
                                                                                 ExecuteEffectDelegate<IMvuEffect> executeEffectAction, Func<IMvuMessage, bool> isQuitMessage) {
-      ILogger? hostLogger = loggerFactory?.CreateLogger("host");
-      ILogger? busLogger = loggerFactory?.CreateLogger("bus");
-      ILogger? runWrapperLogger = loggerFactory?.CreateLogger("wrap");
+      ILogger? hostLogger       = createLoggerFunc("host");
+      ILogger? busLogger        = createLoggerFunc("bus");
+      ILogger? runWrapperLogger = createLoggerFunc("wrap");
 
       IMvuProgramRunner<TView> programRunner = buildProgramRunner();
       programRunner.ViewEmitted += (view, isInitialView) => {

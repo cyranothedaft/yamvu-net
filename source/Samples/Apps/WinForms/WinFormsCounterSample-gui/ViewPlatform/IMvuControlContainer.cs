@@ -9,7 +9,7 @@ internal interface IMvuControlContainer {
    event EventHandler<EventArgs>? ContainerLoaded;
    event EventHandler<FormClosingEventArgs>? ContainerClosing;
 
-   Control MvuComponentContainer { get; }
+   Control ContainerControl { get; }
 
    void Close();
 }
