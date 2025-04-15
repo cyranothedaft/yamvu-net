@@ -8,6 +8,7 @@ using CounterSample.AppCore.Mvu.Messages;
 using CounterSample.AppCore.Services;
 using Microsoft.Extensions.Logging;
 using WinFormsCounterSample.gui.UI;
+using WinFormsCounterSample.gui.ViewPlatform;
 using WinFormsCounterSample.View;
 using yamvu;
 using yamvu.core;
@@ -35,23 +36,23 @@ internal static class EntryPoint {
          _globalAppLogger = _loggerFactory?.CreateLogger("main");
          MainForm mainForm = new MainForm();
 
-         embedMvuProgramInForm(mainForm);
+         embedMvuProgramInContainer(mainForm);
          Application.Run(mainForm);
       }
    }
 
 
-   private static void embedMvuProgramInForm(MainForm form) {
+   private static void embedMvuProgramInContainer(IMvuControlContainer container) {
       ExternalMessageDispatcher externalMessageDispatcher = new();
 
       async void onLoadRunMvuProgram(object? sender, EventArgs e) {
          try {
             // form has loaded, so start (asynchronously run) the MVU program
             await runMvuProgramAsync(externalMessageDispatcher,
-                                     replaceViewAction: view => replaceMvuComponents(form.MvuComponentContainer, view));
+                                     replaceViewAction: view => replaceMvuComponents(container.MvuComponentContainer, view));
 
             // the MVU program has terminated normally, so signal the form to close
-            form.Close();
+            container.Close();
          }
          catch (Exception exception) {
             _globalAppLogger?.LogError(exception, "General exception while running MVU program");
@@ -64,8 +65,8 @@ internal static class EntryPoint {
          externalMessageDispatcher.Dispatch(MvuMessages.Request_Quit());
       }
 
-      form.Load        += onLoadRunMvuProgram;
-      form.FormClosing += onClosingStopMvuProgram;
+      container.ContainerLoaded  += onLoadRunMvuProgram;
+      container.ContainerClosing += onClosingStopMvuProgram;
    }
 
 
