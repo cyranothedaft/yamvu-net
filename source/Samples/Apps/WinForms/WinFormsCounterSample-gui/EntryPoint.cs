@@ -32,30 +32,36 @@ internal static class EntryPoint {
       const LogLevel minimumLogLevel = LogLevel.Trace;
       using ( ILoggerFactory? loggerFactory = LoggerFactory.Create(builder => builder.AddDebug()
                                                                       .SetMinimumLevel(minimumLogLevel))) {
-         _globalAppLogger = loggerFactory?.CreateLogger("main");
-         MainForm mainForm = new MainForm();
+         Func<string, ILogger?> createProgramLogger(string prefix) => category => loggerFactory?.CreateLogger(prefix + category);
 
-         embedMvuProgram1InContainer(mainForm.Program1Container, category => loggerFactory?.CreateLogger("[1]" + category));
+         _globalAppLogger = loggerFactory?.CreateLogger("main");
+
+         MainForm mainForm = new MainForm();
+         embedMvuProgramInContainer(mainForm.Program1Container, runMvuProgram1Async, createProgramLogger("[1]"));
+         embedMvuProgramInContainer(mainForm.Program2Container, runMvuProgram2Async, createProgramLogger("[2]"));
          Application.Run(mainForm);
       }
    }
 
 
-   private static void embedMvuProgram1InContainer(IMvuControlContainer container, Func<string, ILogger?> createLoggerFunc) {
+   private static void embedMvuProgramInContainer(IMvuControlContainer container,
+                                                  Func<ExternalMessageDispatcher, Action<PlatformView<ProgramView>>, Func<string, ILogger?>, Task> runMvuProgramAsync,
+                                                  Func<string, ILogger?> createLoggerFunc) {
       ExternalMessageDispatcher externalMessageDispatcher = new();
 
       async void onLoadRunMvuProgram(object? sender, EventArgs e) {
          try {
             // form has loaded, so start (asynchronously run) the MVU program
-            await runMvuProgram1Async(externalMessageDispatcher,
-                                      replaceViewAction: view => replaceMvuComponents(container.ContainerControl, view),
-                                      createLoggerFunc);
+            await runMvuProgramAsync(externalMessageDispatcher,
+                                     view => replaceMvuComponents(container.ContainerControl, view),
+                                     createLoggerFunc);
 
             // the MVU program has terminated normally, so signal the form to close
             container.Close();
          }
          catch (Exception exception) {
             _globalAppLogger?.LogError(exception, "General exception while running MVU program");
+
             // TODO: form.Close() ?
          }
       }
@@ -87,7 +93,30 @@ internal static class EntryPoint {
                                                                                replaceViewAction,
                                                                                createLoggerFunc,
                                                                                externalMessageDispatcher,
-                                                                               mvuComponent.ProgramInfo,
+                                                                               mvuComponent.ProgramInfo with { Name = mvuComponent.ProgramInfo + "1" },
+                                                                               mvuComponent.MessageAsCommandFunc,
+                                                                               mvuComponent.ExecuteEffectDelegate,
+                                                                               mvuComponent.IsQuitMessageFunc);
+   }
+
+
+   private static async Task runMvuProgram2Async(ExternalMessageDispatcher? externalMessageDispatcher, Action<PlatformView<ProgramView>> replaceViewAction,
+                                                 Func<string, ILogger?> createLoggerFunc) {
+      ILogger? uiLogger       = createLoggerFunc("ui");
+      ILogger? servicesLogger = createLoggerFunc("svcs");
+      IAppServices appServices = new AppServices_Real(servicesLogger);
+
+      PlatformView<ProgramView> view(MvuMessageDispatchDelegate dispatch, Model model)
+         => ViewBuilder.BuildViewFromModel(dispatch, model, uiLogger);
+
+      MvuProgramComponent<Model, PlatformView<ProgramView>> mvuComponent = Component.GetAsComponent(appServices, view, createLoggerFunc("prog"), createLoggerFunc);
+      // var programRunnerWithServices = ProgramRunnerWithServices<PlatformView<ProgramView>>.Build(externalMessageDispatcher, _loggerFactory);
+      var finalModel = await ProgramRunnerWithBus.RunProgramWithCommonBusAsync(mvuComponent.BuildProgramRunner,
+                                                                               mvuComponent.BuildProgram,
+                                                                               replaceViewAction,
+                                                                               createLoggerFunc,
+                                                                               externalMessageDispatcher,
+                                                                               mvuComponent.ProgramInfo with { Name = mvuComponent.ProgramInfo + "2" },
                                                                                mvuComponent.MessageAsCommandFunc,
                                                                                mvuComponent.ExecuteEffectDelegate,
                                                                                mvuComponent.IsQuitMessageFunc);

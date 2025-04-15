@@ -1,5 +1,4 @@
 using System.Windows.Forms;
-using WinFormsCounterSample.gui.ViewPlatform;
 
 
 
@@ -7,19 +6,16 @@ namespace WinFormsCounterSample.gui.UI;
 
 public partial class MainForm : Form {
 
-   private readonly MvuContainerWrapper _program1Container;
-   internal IMvuControlContainer Program1Container => _program1Container;
-
-   // protected override void OnLoad(EventArgs e) => ContainerLoaded?.Invoke(this, e);
-   // protected override void OnFormClosing(FormClosingEventArgs e) => ContainerClosing?.Invoke(this, e);
+   internal MvuContainerWrapper Program1Container { get; }
+   internal MvuContainerWrapper Program2Container { get; }
 
 
    // N.B.: the form's DoubleBuffered property has also been set to true, to try reducing flickering when view components are replaced
    public MainForm() {
       InitializeComponent();
-      _program1Container =  MvuContainerWrapper.AttachToForm(this, this.Program1GroupBox);
+      Program1Container =  MvuContainerWrapper.AttachToForm(this, this.Program1GroupBox);
+      Program2Container =  MvuContainerWrapper.AttachToForm(this, this.Program2GroupBox);
    }
-
 
 
 }
