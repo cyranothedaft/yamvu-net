@@ -9,7 +9,7 @@ using yamvu.core.Primitives;
 
 namespace yamvu.Runners;
 
-public class BusRunner {
+public static class BusRunner {
 
    public static async Task<(TResult actionResult, MessageBusStats stats)> RunBusAndDoAsync<TResult>(Func<IMessageBus<IMvuCommand>, Task<TResult>> whatToDoWithTheBusAsync,
                                                                                                      bool throwOnUnroutableMessage = false,
