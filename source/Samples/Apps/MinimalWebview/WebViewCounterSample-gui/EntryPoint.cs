@@ -5,7 +5,7 @@ using Microsoft.Extensions.Logging.Console;
 
 
 
-namespace MinimalWebView;
+namespace MinimalWebViewCounterSample;
 
 class EntryPoint {
 
@@ -14,7 +14,7 @@ class EntryPoint {
 
 
    [STAThread]
-   static int Main(string[] args) {
+   static int Main() {
 
 #if DEBUG // By default GUI apps have no console. Open one to enable Console.WriteLine debugging 🤠
       PInvoke.AllocConsole();

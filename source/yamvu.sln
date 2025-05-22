@@ -48,7 +48,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PhotinoHtmlCounterSample-gu
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "MinimalWebview", "MinimalWebview", "{CBAA8C03-8FDB-45B0-8CF2-0D825EC9585C}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MinimalWebView", "Samples\Apps\MinimalWebview\WebViewCounterSample-gui\MinimalWebView.csproj", "{5CC6762B-3A24-1B59-3585-D04B874300D4}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MinimalWebViewCounterSample", "Samples\Apps\MinimalWebview\WebViewCounterSample-gui\MinimalWebViewCounterSample.csproj", "{5CC6762B-3A24-1B59-3585-D04B874300D4}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

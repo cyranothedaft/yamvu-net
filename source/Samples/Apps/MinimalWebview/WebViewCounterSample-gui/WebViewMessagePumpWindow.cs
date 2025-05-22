@@ -14,7 +14,7 @@ using Microsoft.Extensions.Logging;
 
 
 
-namespace MinimalWebView;
+namespace MinimalWebViewCounterSample;
 
 
 /// <summary>
@@ -32,8 +32,8 @@ public static class WebViewMessagePumpWindow {
       UiThreadSynchronizationContext? uiThreadSyncCtx = null;
       CoreWebView2Controller? controller = null;
 
-      // v-- this is *probably* okay, right?
       // ReSharper disable once AccessToModifiedClosure
+      // ^-- this is *probably* okay, right?
       HWND hwnd = registerAndCreateWindow(() => uiThreadSyncCtx, () => controller, windowTitle, backgroundColor);
       if (hwnd.Value == 0)
          throw new Exception("hwnd not created");
