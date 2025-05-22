@@ -33,69 +33,27 @@ internal static class EntryPoint {
       using ( _loggerFactory = LoggerFactory.Create(builder => builder.AddDebug()
                                                                       .SetMinimumLevel(minimumLogLevel))) {
          _globalAppLogger = _loggerFactory?.CreateLogger("main");
+         ILogger? svcsLogger = _loggerFactory?.CreateLogger("svcs");
+         ILogger? uiLogger   = _loggerFactory?.CreateLogger("ui");
+
+         IAppServices appServices = new AppServices_Real(svcsLogger);
+
+         PlatformView<ProgramView> view(MvuMessageDispatchDelegate dispatch, Model model)
+            => ViewBuilder.BuildViewFromModel(dispatch, model, uiLogger);
+
          MainForm mainForm = new MainForm();
+         WinFormsMvuHost.RunApp_SynchronousBlocking(mainForm,
+                                                    MvuMessages.Request_Quit, 
+                                                    () => Component.GetAsComponent(appServices, view, _loggerFactory?.CreateLogger("prog"), _loggerFactory),
+                                                    _loggerFactory);
 
-         embedMvuProgramInForm(mainForm);
-         Application.Run(mainForm);
+         // WinFormsMvuHost winFormsMvuHost  = new WinFormsMvuHost();
+         // winFormsMvuHost  .EmbedMvuProgramInForm(mainForm, TODO);
+         // winFormsMvuHost  .RunApp_SynchronousBlocking(mainForm);
       }
    }
 
 
-   private static void embedMvuProgramInForm(MainForm form) {
-      ExternalMessageDispatcher externalMessageDispatcher = new();
-
-      async void onLoadRunMvuProgram(object? sender, EventArgs e) {
-         try {
-            // form has loaded, so start (asynchronously run) the MVU program
-            await runMvuProgramAsync(externalMessageDispatcher,
-                                     replaceViewAction: view => replaceMvuComponents(form.MvuComponentContainer, view));
-
-            // the MVU program has terminated normally, so signal the form to close
-            form.Close();
-         }
-         catch (Exception exception) {
-            _globalAppLogger?.LogError(exception, "General exception while running MVU program");
-            // TODO: form.Close() ?
-         }
-      }
-
-      void onClosingStopMvuProgram(object? sender, FormClosingEventArgs e) {
-         // form is closing, so signal the MVU program to terminate
-         externalMessageDispatcher.Dispatch(MvuMessages.Request_Quit());
-      }
-
-      form.Load        += onLoadRunMvuProgram;
-      form.FormClosing += onClosingStopMvuProgram;
-   }
 
 
-   private static async Task runMvuProgramAsync(ExternalMessageDispatcher? externalMessageDispatcher, Action<PlatformView<ProgramView>> replaceViewAction) {
-      ILogger? uiLogger = _loggerFactory?.CreateLogger("ui");
-      ILogger? servicesLogger = _loggerFactory?.CreateLogger("svcs");
-      IAppServices appServices = new AppServices_Real(servicesLogger);
-
-      PlatformView<ProgramView> view(MvuMessageDispatchDelegate dispatch, Model model)
-         => ViewBuilder.BuildViewFromModel(dispatch, model, uiLogger);
-
-      MvuProgramComponent<Model, PlatformView<ProgramView>> mvuComponent = Component.GetAsComponent(appServices, view, _loggerFactory?.CreateLogger("prog"), _loggerFactory);
-      // var programRunnerWithServices = ProgramRunnerWithServices<PlatformView<ProgramView>>.Build(externalMessageDispatcher, _loggerFactory);
-      var finalModel = await ProgramRunnerWithBus.RunProgramWithCommonBusAsync(mvuComponent.BuildProgramRunner,
-                                                                               mvuComponent.BuildProgram,
-                                                                               replaceViewAction,
-                                                                               _loggerFactory,
-                                                                               externalMessageDispatcher,
-                                                                               mvuComponent.ProgramInfo,
-                                                                               mvuComponent.MessageAsCommandFunc,
-                                                                               mvuComponent.ExecuteEffectDelegate,
-                                                                               mvuComponent.IsQuitMessageFunc);
-   }
-
-
-   private static void replaceMvuComponents(Control componentContainer, PlatformView<ProgramView> view) {
-      componentContainer.SuspendLayout();
-      componentContainer.Controls.Clear();
-      componentContainer.Controls.AddRange(view.MvuView.Controls.ToArray());
-      componentContainer.ResumeLayout();
-      componentContainer.Invalidate();
-   }
 }

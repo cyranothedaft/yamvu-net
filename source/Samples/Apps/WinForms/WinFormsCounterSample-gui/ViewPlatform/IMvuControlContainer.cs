@@ -5,6 +5,6 @@ using System.Windows.Forms;
 
 namespace WinFormsCounterSample.gui.ViewPlatform;
 
-internal interface IMvuControlContainer {
+public interface IMvuControlContainer {
    Control MvuComponentContainer { get; }
 }

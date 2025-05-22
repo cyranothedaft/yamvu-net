@@ -6,6 +6,6 @@ using System.Windows.Forms;
 
 namespace WinFormsCounterSample.View;
 
-internal record ProgramView(
+public record ProgramView(
       ImmutableList<Control> Controls
 );
