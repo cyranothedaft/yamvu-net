@@ -183,11 +183,11 @@ public static class WebViewMessagePumpWindow {
       if (string.IsNullOrEmpty(webMessage))
          return;
 
-      // simulate moving some slow operation to a background thread
-      await Task.Run(() => Thread.Sleep(200));
+      // // simulate moving some slow operation to a background thread
+      // await Task.Run(() => Thread.Sleep(200));
 
       // this will blow up if not run on the UI thread, so the SynchronizationContext needs to have been wired up correctly
-      await controller.CoreWebView2.ExecuteScriptAsync($"alert('Hi from the UI thread! I got a message from the browser: {webMessage}')");
+      await controller.CoreWebView2.ExecuteScriptAsync($"replaceView('New View: {webMessage}')");
    }
 
 

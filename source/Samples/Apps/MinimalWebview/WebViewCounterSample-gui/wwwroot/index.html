@@ -9,20 +9,35 @@
 </head>
 
 <body class="p-5 bg-gray-900 text-indigo-200">
-    <h1 class="mb-5 font-mono text-indigo-400 text-5xl">Welcome!</h1>
-    <p class="mb-5">An MVU sample in a WebView2-hosted UI.</p>
 
-    <button id="btn1" class="bg-indigo-600 hover:bg-indigo-800 text-white font-bold py-1 px-4 rounded-md self-center">Click me to demo .NET-JS interop</button>
+<h1 class="mb-5 font-mono text-indigo-400 text-5xl">Welcome</h1>
+<p class="mb-5">to an MVU sample in a WebView2-hosted UI.</p>
 
-    <script>
-        btn1.onclick = (event) => {
-            window.chrome.webview.postMessage("😎💾😎");
-        }
+<button id="btn1" class="bg-indigo-600 hover:bg-indigo-800 text-white font-bold py-1 px-4 rounded-md self-center">Click me to demo .NET-JS interop</button>
+
+<div id="mvudiv">(not initialized)</div>
+
+<script>
+
+    btn1.onclick = (event) => {
+        sendMessage("😎💾😎");
+    }
 
 
+    var mvudiv = document.getElementById('mvudiv');
 
 
-    </script>
+    function sendMessage(msg) {
+        window.chrome.webview.postMessage('msg:' + msg);
+    }
+
+    // window.external.receiveMessage(message => alert(message));
+
+    function replaceView(message) {
+        mvudiv.innerHTML = message;
+    }
+
+</script>
 </body>
 
 </html>
