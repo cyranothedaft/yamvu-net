@@ -26,7 +26,7 @@ internal class ViewBuilder {
 
       // (TODO: this isn't ideal) All events that generate messages (both external and internal to the view) must be funnelled through the view,
       // because that's where the dispatch delegate is known to be.
-      ExternalInputBindings externalInputBindings = new ExternalInputBindings(FormClosed: () => dispatch(MvuMessages.Request_Quit()));
+      ExternalInputBindings externalInputBindings = new ExternalInputBindings(WindowClosed: () => dispatch(MvuMessages.Request_Quit()));
       ViewInputBindings viewInputBindings = new ViewInputBindings(Increment1ButtonPressed: () => dispatch(MvuMessages.Request_Increment1()),
                                                                   IncrementRandomButtonPressed: () => dispatch(MvuMessages.Request_IncrementRandom()));
 
