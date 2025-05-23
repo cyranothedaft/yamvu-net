@@ -3,14 +3,16 @@ using CounterSample.AppCore.Mvu;
 using CounterSample.AppCore.Mvu.Messages;
 using Microsoft.Extensions.Logging;
 using yamvu.core;
+using yamvu.Extensions.WinForms;
+
 
 
 namespace WinFormsCounterSample.View;
 
 internal class ViewBuilder {
 
-   public static PlatformView<ProgramView> BuildInitialView()
-      => new(new ProgramView([ buildInitialView() ]),
+   public static ProgramView BuildInitialView()
+      => new([ buildInitialView() ],
              new ViewInputBindings(),
              new ExternalInputBindings());
 
@@ -20,7 +22,7 @@ internal class ViewBuilder {
    // and (2) a table of input bindings (definitions of what happens when user input occurs: ViewInputBindings).
    // 
 
-   public static PlatformView<ProgramView> BuildViewFromModel(MvuMessageDispatchDelegate dispatch, Model model, ILogger? uilogger) {
+   public static ProgramView BuildViewFromModel(MvuMessageDispatchDelegate dispatch, Model model, ILogger? uilogger) {
 
       // (TODO: this isn't ideal) All events that generate messages (both external and internal to the view) must be funnelled through the view,
       // because that's where the dispatch delegate is known to be.
@@ -30,9 +32,9 @@ internal class ViewBuilder {
 
       Control mainPanel = buildMainPanel(model, viewInputBindings);
 
-      ProgramView programView = new ProgramView([ mainPanel ]);
-
-      PlatformView<ProgramView> platformView = new PlatformView<ProgramView>(programView, viewInputBindings, externalInputBindings);
+      ProgramView platformView = new ProgramView([ mainPanel ],
+                                                 viewInputBindings,
+                                                 externalInputBindings);
 
       return platformView;
    }

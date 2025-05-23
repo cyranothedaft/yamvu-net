@@ -2,8 +2,7 @@
 using System.Windows.Forms;
 
 
-
-namespace WinFormsCounterSample.gui.ViewPlatform;
+namespace yamvu.Extensions.WinForms;
 
 public interface IMvuControlContainer {
    Control MvuComponentContainer { get; }

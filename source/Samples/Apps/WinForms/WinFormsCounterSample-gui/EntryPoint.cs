@@ -1,7 +1,4 @@
 using System;
-using System.Linq;
-using System.Threading.Tasks;
-using System.Windows.Forms;
 using CounterSample.AppCore;
 using CounterSample.AppCore.Mvu;
 using CounterSample.AppCore.Mvu.Messages;
@@ -11,15 +8,13 @@ using WinFormsCounterSample.gui.UI;
 using WinFormsCounterSample.View;
 using yamvu;
 using yamvu.core;
-using yamvu.Runners;
-
+using yamvu.Extensions.WinForms;
 
 
 namespace WinFormsCounterSample.gui;
 
 internal static class EntryPoint {
    private static ILoggerFactory? _loggerFactory = null;
-   private static ILogger? _globalAppLogger = null;
 
 
    /// <summary>
@@ -32,28 +27,22 @@ internal static class EntryPoint {
       const LogLevel minimumLogLevel = LogLevel.Trace;
       using ( _loggerFactory = LoggerFactory.Create(builder => builder.AddDebug()
                                                                       .SetMinimumLevel(minimumLogLevel))) {
-         _globalAppLogger = _loggerFactory?.CreateLogger("main");
          ILogger? svcsLogger = _loggerFactory?.CreateLogger("svcs");
          ILogger? uiLogger   = _loggerFactory?.CreateLogger("ui");
 
          IAppServices appServices = new AppServices_Real(svcsLogger);
 
-         PlatformView<ProgramView> view(MvuMessageDispatchDelegate dispatch, Model model)
+         ProgramView view(MvuMessageDispatchDelegate dispatch, Model model)
             => ViewBuilder.BuildViewFromModel(dispatch, model, uiLogger);
+
+         MvuProgramComponent<Model, ProgramView> getComponent()
+            => Component.GetAsComponent(appServices, view, _loggerFactory?.CreateLogger("prog"), _loggerFactory);
 
          MainForm mainForm = new MainForm();
          WinFormsMvuHost.RunApp_SynchronousBlocking(mainForm,
-                                                    MvuMessages.Request_Quit, 
-                                                    () => Component.GetAsComponent(appServices, view, _loggerFactory?.CreateLogger("prog"), _loggerFactory),
+                                                    MvuMessages.Request_Quit,
+                                                    getComponent,
                                                     _loggerFactory);
-
-         // WinFormsMvuHost winFormsMvuHost  = new WinFormsMvuHost();
-         // winFormsMvuHost  .EmbedMvuProgramInForm(mainForm, TODO);
-         // winFormsMvuHost  .RunApp_SynchronousBlocking(mainForm);
       }
    }
-
-
-
-
 }
