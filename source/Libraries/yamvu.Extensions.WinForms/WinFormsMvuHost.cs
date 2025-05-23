@@ -11,8 +11,8 @@ using yamvu.Runners;
 namespace yamvu.Extensions.WinForms;
 
 public static class WinFormsMvuHost {
-   public static void RunApp_SynchronousBlocking<TForm, TModel, TView>(TForm hostForm, Func<IMvuMessage> getQuitMessage, Func<MvuProgramComponent<TModel, TView>> buildMvuComponent,
-                                                                       ILoggerFactory? loggerFactory)
+   public static void RunMvuApp<TForm, TModel, TView>(this TForm hostForm, Func<IMvuMessage> getQuitMessage, Func<MvuProgramComponent<TModel, TView>> buildMvuComponent,
+                                                      ILoggerFactory? loggerFactory)
          where TForm : Form, IMvuControlContainer
          where TView : IWinFormsView {
       embedMvuProgramInForm(hostForm, getQuitMessage, buildMvuComponent, loggerFactory);

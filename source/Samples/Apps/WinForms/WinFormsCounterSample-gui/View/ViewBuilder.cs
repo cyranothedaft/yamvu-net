@@ -17,13 +17,7 @@ internal class ViewBuilder {
              new ExternalInputBindings());
 
 
-   // because of how many UI platforms work, the visual part of the view is coupled with the input-event handling part
-   // to support that: the 'view' that's created has two components: (1) the view itself (the raw data for rendering the view: ProgramView),
-   // and (2) a table of input bindings (definitions of what happens when user input occurs: ViewInputBindings).
-   // 
-
    public static ProgramView BuildViewFromModel(MvuMessageDispatchDelegate dispatch, Model model, ILogger? uilogger) {
-
       // (TODO: this isn't ideal) All events that generate messages (both external and internal to the view) must be funnelled through the view,
       // because that's where the dispatch delegate is known to be.
       ExternalInputBindings externalInputBindings = new ExternalInputBindings(FormClosed: () => dispatch(MvuMessages.Request_Quit()));
