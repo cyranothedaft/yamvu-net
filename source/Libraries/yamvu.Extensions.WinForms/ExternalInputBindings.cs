@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace WinFormsCounterSample.View;
+namespace yamvu.Extensions.WinForms;
 
 public record ExternalInputBindings(
       Action? FormClosed

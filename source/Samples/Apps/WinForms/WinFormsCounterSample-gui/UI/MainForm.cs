@@ -1,6 +1,6 @@
 using System;
 using System.Windows.Forms;
-using WinFormsCounterSample.gui.ViewPlatform;
+using yamvu.Extensions.WinForms;
 
 
 
