@@ -1,48 +1,43 @@
 ﻿using System;
-using System.Collections.Concurrent;
-using System.Collections.Generic;
 using System.Drawing;
-using System.Reflection;
-using System.Threading;
 using System.Threading.Tasks;
 using Microsoft.Web.WebView2.Core;
 using Windows.Win32;
 using Windows.Win32.Foundation;
-using Windows.Win32.Graphics.Gdi;
 using Windows.Win32.UI.WindowsAndMessaging;
 using Microsoft.Extensions.Logging;
-using yamvu.Extensions.WebView;
+using yamvu.Extensions.WebView.Library.Window;
 
 
 
-namespace MinimalWebViewCounterSample;
+namespace yamvu.Extensions.WebView.Library.WebView;
 
-public class WebView {
+partial class MinimalWebView {
    private const string StaticFileDirectory = "wwwroot";
    private const string VirtualHostName = "minimalwebview.example";
 
-   // public event EventHandler<MessageFromWebViewEventArgs> MessageFromWebViewEvent;
-   // public class MessageFromWebViewEventArgs:EventArgs{}
+
+   public static MinimalWebView Init(MinimalWindow window, ILogger? logger) {
+      MinimalWebView webView = new(logger);
+      webView.initController(window.Handle);
+      return webView;
+   }
+
+   
+   private static async Task initControllerAsync(HWND hwnd, HandleMessageFromWebViewDelegate handleMessageFromWebView, ILogger? logger,
+                                                 Action<CoreWebView2Controller> setControllerAction) {
+      CoreWebView2Controller webViewController = await initControllerActualAsync();
+      setControllerAction(webViewController);
 
 
-   // HandleMessageFromWebViewAsyncDelegate handleMessageFromWebViewAsync
-
-   internal static WebView InitController(HWND hwnd, HandleMessageFromWebViewAsyncDelegate handleMessageFromWebViewAsync, ILogger? logger) {
-      // Start initializing WebView2 in a fire-and-forget manner. Errors will be handled in the initialization function
-      _ = initControllerAsync();
-
-      return new WebView();
-
-      async Task<CoreWebView2Controller> initControllerAsync() {
-         CoreWebView2Controller controller = await createCoreWebView2Async(hwnd,
-                                                                      // newcontroller => { controller = newcontroller; }, 
-                                                                      logger);
-         setupWebView(controller, hwnd, handleMessageFromWebViewAsync);
+      async Task<CoreWebView2Controller> initControllerActualAsync() {
+         CoreWebView2Controller controller = await createCoreWebView2Async(hwnd, logger);
+         setupWebView(controller, hwnd, handleMessageFromWebView);
          navigateWebView(controller);
          return controller;
       }
 
-      static void setupWebView(CoreWebView2Controller controller, HWND hwnd, HandleMessageFromWebViewAsyncDelegate handleMessageFromWebViewAsync) {
+      static void setupWebView(CoreWebView2Controller controller, HWND hwnd, HandleMessageFromWebViewDelegate handleMessageFromWebView) {
          controller.DefaultBackgroundColor          =  Color.Transparent; // avoids flash of white when page first renders
          controller.CoreWebView2.WebMessageReceived += (sender, args) => CoreWebView2_WebMessageReceived(controller, sender, args);
          controller.CoreWebView2.SetVirtualHostNameToFolderMapping(VirtualHostName, StaticFileDirectory, CoreWebView2HostResourceAccessKind.Allow);
@@ -50,25 +45,12 @@ public class WebView {
          controller.Bounds    = new Rectangle(0, 0, hwndRect.right, hwndRect.bottom);
          controller.IsVisible = true;
 
-         async void CoreWebView2_WebMessageReceived(CoreWebView2Controller controller, object? sender, CoreWebView2WebMessageReceivedEventArgs e) {
-            try {
-               string? webMessage = e.TryGetWebMessageAsString();
-               if (string.IsNullOrEmpty(webMessage))
-                  return;
+         void CoreWebView2_WebMessageReceived(CoreWebView2Controller controller, object? sender, CoreWebView2WebMessageReceivedEventArgs e) {
+            string? webMessage = e.TryGetWebMessageAsString();
+            if (string.IsNullOrEmpty(webMessage))
+               return;
 
-               // // simulate moving some slow operation to a background thread
-               // await Task.Run(() => Thread.Sleep(200));
-
-               // this will blow up if not run on the UI thread, so the SynchronizationContext needs to have been wired up correctly
-               await handleMessageFromWebViewAsync(webMessage, scriptExecutorAsync);
-               // await controller.CoreWebView2.ExecuteScriptAsync($"replaceView('New View: {webMessage}')");
-
-               Task scriptExecutorAsync(string javascript)
-                  => controller.CoreWebView2.ExecuteScriptAsync(javascript);
-            }
-            catch (Exception exception) {
-               throw; // TODO handle exception
-            }
+            handleMessageFromWebView(webMessage);
          }
       }
 
@@ -97,15 +79,12 @@ public class WebView {
             //TODO: show message: download WV2 bootstrapper from https://go.microsoft.com/fwlink/p/?LinkId=2124703 and run it
          }
 
-         Environment.Exit(1);
+         Environment.Exit(1); // TODO: !?
       }
       catch (Exception ex) {
          PInvoke.MessageBox(hwnd, $"Failed to initialize WebView2:{Environment.NewLine}{ex}", "Error", MESSAGEBOX_STYLE.MB_OK | MESSAGEBOX_STYLE.MB_ICONERROR);
-         Environment.Exit(1);
+         Environment.Exit(1); // TODO: !?
       }
       throw new Exception("never here");
    }
-
-
-
 }
