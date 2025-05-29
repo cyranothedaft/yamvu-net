@@ -1,9 +1,12 @@
 ﻿using System;
+using System.Text.Json;
+using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
 using Microsoft.Web.WebView2.Core;
 using yamvu.core.Primitives;
 using yamvu.Extensions.WebView.Library.WebView;
+using yamvu.Runners;
 
 
 
@@ -15,9 +18,13 @@ public static class WebViewMvuHost {
 
 
 
-   public static void EmbedMvuProgram<TModel, TView>(this MinimalWebView webView,
-                                                     Func<IMvuMessage> getQuitMessage, Func<MvuProgramComponent<TModel, TView>> buildMvuComponent,
-                                                     ILoggerFactory? loggerFactory) {
+   public static async Task RunMvuProgramAsync<TModel, TView>(this MinimalWebView webView,
+                                                     Func<IMvuMessage> getQuitMessage, 
+                                                     Func<MvuProgramComponent<TModel, TView>> buildMvuComponent,
+                                                     Func<string,IMvuMessage> deserializeMessage,
+                                                     ILoggerFactory? loggerFactory) 
+   where TView:IWebViewView
+   {
       ILogger? appLogger = loggerFactory?.CreateLogger("app");
 
       ExternalMessageDispatcher externalMessageDispatcher = new();
@@ -28,13 +35,23 @@ public static class WebViewMvuHost {
 
       async void handleWebMessageAsync(string webMessage, Action<Exception> handleException) {
          try {
-            Console.WriteLine("===[ {0} ]===", webMessage);
-            await webView.ExecuteScriptAsync($"alert('Hi from the UI thread! I got a message from the browser: {webMessage}')");
+            IMvuMessage message = deserializeMessage(webMessage);
+            externalMessageDispatcher.Dispatch(message);
          }
          catch (Exception exception) {
             handleException(exception);
          }
       }
+
+      // form has loaded, so start (asynchronously run) the MVU program
+      await runMvuProgramAsync(externalMessageDispatcher,
+                               replaceViewAction: view => updateView(webView, view),
+                               buildMvuComponent,
+                               loggerFactory);
+
+//===TODO      // the MVU program has terminated normally, so signal the form to close
+//===TODO      hostForm.Close();
+
 
 
       // async void onLoadRunMvuProgram(object? sender, EventArgs e) {
@@ -62,5 +79,30 @@ public static class WebViewMvuHost {
       //
       // hostForm.Load        += onLoadRunMvuProgram;
       // hostForm.FormClosing += onClosingStopMvuProgram;
+   }
+
+
+   private static async Task runMvuProgramAsync<TModel, TView>(ExternalMessageDispatcher? externalMessageDispatcher, Action<TView> replaceViewAction,
+                                                               Func<MvuProgramComponent<TModel, TView>> buildMvuComponent,
+                                                               ILoggerFactory? loggerFactory) {
+      MvuProgramComponent<TModel, TView> mvuComponent = buildMvuComponent();
+      var finalModel = await ProgramRunnerWithBus.RunProgramWithCommonBusAsync(mvuComponent.BuildProgramRunner,
+                                                                               mvuComponent.BuildProgram,
+                                                                               replaceViewAction,
+                                                                               loggerFactory,
+                                                                               externalMessageDispatcher,
+                                                                               mvuComponent.ProgramInfo,
+                                                                               mvuComponent.MessageAsCommandFunc,
+                                                                               mvuComponent.ExecuteEffectDelegate,
+                                                                               mvuComponent.IsQuitMessageFunc);
+   }
+
+
+   private static void updateView<TView>(MinimalWebView webView, TView view) where TView : IWebViewView {
+      // TODO: find a way to send a message directly, thus avoiding the need to encode this
+      string javascriptEncodedHtml = System.Text.Encodings.Web.JavaScriptEncoder.Default.Encode(view.Html);
+
+      // fire and forget
+      _ = webView.ExecuteScriptAsync("replaceView(" + javascriptEncodedHtml + ")");
    }
 }

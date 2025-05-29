@@ -4,7 +4,6 @@ using System.Threading.Tasks;
 using Microsoft.Web.WebView2.Core;
 using Windows.Win32;
 using Windows.Win32.Foundation;
-using Windows.Win32.UI.WindowsAndMessaging;
 using Microsoft.Extensions.Logging;
 using yamvu.Extensions.WebView.Library.Window;
 
@@ -70,19 +69,23 @@ partial class MinimalWebView {
          return controller;
       }
       catch (WebView2RuntimeNotFoundException) {
-         var result = PInvoke.MessageBox(hwnd, "WebView2 runtime not installed.\r\n" +
-                                               "Download and install:\r\n"           +
-                                               "https://developer.microsoft.com/en-us/microsoft-edge/webview2?form=MA13LH",
-                                         "Error", MESSAGEBOX_STYLE.MB_OK | MESSAGEBOX_STYLE.MB_ICONERROR);
+         // TODO: show message?
 
-         if (result == MESSAGEBOX_RESULT.IDYES) {
-            //TODO: show message: download WV2 bootstrapper from https://go.microsoft.com/fwlink/p/?LinkId=2124703 and run it
-         }
+         // var result = PInvoke.MessageBox(hwnd, "WebView2 runtime not installed.\r\n" +
+         //                                       "Download and install:\r\n"           +
+         //                                       "https://developer.microsoft.com/en-us/microsoft-edge/webview2?form=MA13LH",
+         //                                 "Error", MESSAGEBOX_STYLE.MB_OK | MESSAGEBOX_STYLE.MB_ICONERROR);
+         //
+         // if (result == MESSAGEBOX_RESULT.IDYES) {
+         //    //TODO: show message: download WV2 bootstrapper from https://go.microsoft.com/fwlink/p/?LinkId=2124703 and run it
+         // }
 
          Environment.Exit(1); // TODO: !?
       }
       catch (Exception ex) {
-         PInvoke.MessageBox(hwnd, $"Failed to initialize WebView2:{Environment.NewLine}{ex}", "Error", MESSAGEBOX_STYLE.MB_OK | MESSAGEBOX_STYLE.MB_ICONERROR);
+         // TODO: show message?
+         // PInvoke.MessageBox(hwnd, $"Failed to initialize WebView2:{Environment.NewLine}{ex}", "Error", MESSAGEBOX_STYLE.MB_OK | MESSAGEBOX_STYLE.MB_ICONERROR);
+
          Environment.Exit(1); // TODO: !?
       }
       throw new Exception("never here");

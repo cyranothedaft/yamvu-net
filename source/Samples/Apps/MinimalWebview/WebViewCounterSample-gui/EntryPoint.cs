@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Text.Json;
 using System.Threading.Tasks;
 using Windows.Win32;
 using CounterSample.AppCore;
@@ -41,7 +42,7 @@ class EntryPoint {
                                                                                                   options.TimestampFormat = "HH:mm:ss ";
                                                                                                   options.ColorBehavior   = LoggerColorBehavior.Enabled;
                                                                                                })
-                                                                             .SetMinimumLevel(LogLevel.Debug));
+                                                                             .SetMinimumLevel(LogLevel.Trace));
 
       ILogger? servicesLogger = loggerFactory?.CreateLogger("svcs");
       ILogger? uiLogger = loggerFactory?.CreateLogger("UI");
@@ -55,15 +56,19 @@ class EntryPoint {
       MinimalWebView webView = MinimalWebView.Init(window, uiLogger);
       window.SizeChanged += webView.SetSize;
 
-      webView.EmbedMvuProgram(MvuMessages.Request_Quit, 
-                               () => Component.GetAsComponent(new AppServices_Real(servicesLogger), 
-                                                              (dispatch, model) => ViewBuilder.BuildView(dispatch, model, uiLogger),
-                                                              programLogger,
-                                                              loggerFactory),
-                               loggerFactory);
+      // Task programTask = webView.RunMvuProgramAsync(MvuMessages.Request_Quit, 
+      //                                               () => Component.GetAsComponent(new AppServices_Real(servicesLogger), 
+      //                                                                              (dispatch, model) => ViewBuilder.BuildView(dispatch, model, uiLogger),
+      //                                                                              programLogger,
+      //                                                                              loggerFactory),
+      //                                               deserializeMessage,
+      //                                               loggerFactory);
 
 
       int exitCode = MessagePump.Run(messagePumpLogger);
+
+      // await programTask;
+
       return exitCode;
 
       // int exitCode = Window.CreateAndShow(WindowTitle, BackgroundColor,
@@ -92,4 +97,10 @@ class EntryPoint {
    }
 
 
+   private static IMvuMessage deserializeMessage(string serializedMessage) {
+      // TODO: improve this!
+      if (serializedMessage.Contains("random", StringComparison.OrdinalIgnoreCase))
+         return JsonSerializer.Deserialize<Request_IncrementRandomMessage>(serializedMessage)!;
+      throw new NotImplementedException();
+   }
 }
