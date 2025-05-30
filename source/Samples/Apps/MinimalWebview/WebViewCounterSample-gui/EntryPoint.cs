@@ -36,18 +36,28 @@ class EntryPoint {
 #endif
 
       using ILoggerFactory loggerFactory = LoggerFactory.Create(builder =>
-                                                                      builder.AddSimpleConsole(options => {
-                                                                                                  options.IncludeScopes   = true;
-                                                                                                  options.SingleLine      = true;
-                                                                                                  options.TimestampFormat = "HH:mm:ss ";
-                                                                                                  options.ColorBehavior   = LoggerColorBehavior.Enabled;
-                                                                                               })
-                                                                             .SetMinimumLevel(LogLevel.Trace));
+                                                                      builder
+                                                                           .AddSimpleConsole(options => {
+                                                                                                options.IncludeScopes   = true;
+                                                                                                options.SingleLine      = true;
+                                                                                                options.TimestampFormat = "HH:mm:ss ";
+                                                                                                options.ColorBehavior   = LoggerColorBehavior.Enabled;
+                                                                                             })
+                                                                           .AddFilter("bus", LogLevel.Debug)
+                                                                           .AddFilter("WM" , LogLevel.Debug)
+                                                                           .SetMinimumLevel( LogLevel.Trace) // fallback/default
+                                                               );
 
-      ILogger? servicesLogger = loggerFactory?.CreateLogger("svcs");
-      ILogger? uiLogger = loggerFactory?.CreateLogger("UI");
+      ILogger? appLogger         = loggerFactory?.CreateLogger("app");
+      ILogger? servicesLogger    = loggerFactory?.CreateLogger("svcs");
+      ILogger? uiLogger          = loggerFactory?.CreateLogger("UI");
       ILogger? messagePumpLogger = loggerFactory?.CreateLogger("WM");
-      ILogger? programLogger = loggerFactory?.CreateLogger("prog");
+      ILogger? programLogger     = loggerFactory?.CreateLogger("prog");
+
+
+
+      
+
 
 
       MinimalWindow window = MinimalWindow.Create(WindowTitle, WindowWidth, WindowHeight, BackgroundColor, uiLogger);
@@ -56,18 +66,16 @@ class EntryPoint {
       MinimalWebView webView = MinimalWebView.Init(window, uiLogger);
       window.SizeChanged += webView.SetSize;
 
-      // Task programTask = webView.RunMvuProgramAsync(MvuMessages.Request_Quit, 
-      //                                               () => Component.GetAsComponent(new AppServices_Real(servicesLogger), 
-      //                                                                              (dispatch, model) => ViewBuilder.BuildView(dispatch, model, uiLogger),
-      //                                                                              programLogger,
-      //                                                                              loggerFactory),
-      //                                               deserializeMessage,
-      //                                               loggerFactory);
+      _ = webView.RunMvuProgramAsync(MvuMessages.Request_Quit, 
+                                                    () => Component.GetAsComponent(new AppServices_Real(servicesLogger), 
+                                                                                   (dispatch, model) => ViewBuilder.BuildView(dispatch, model, uiLogger),
+                                                                                   programLogger,
+                                                                                   loggerFactory), 
+                                                    webMessage => deserializeMessage(webMessage, appLogger),
+                                                    loggerFactory);
 
 
       int exitCode = MessagePump.Run(messagePumpLogger);
-
-      // await programTask;
 
       return exitCode;
 
@@ -97,10 +105,25 @@ class EntryPoint {
    }
 
 
-   private static IMvuMessage deserializeMessage(string serializedMessage) {
-      // TODO: improve this!
-      if (serializedMessage.Contains("random", StringComparison.OrdinalIgnoreCase))
-         return JsonSerializer.Deserialize<Request_IncrementRandomMessage>(serializedMessage)!;
-      throw new NotImplementedException();
+   // TODO?
+   //    see:  https://learn.microsoft.com/en-us/dotnet/core/extensions/logging?tabs=command-line#logging-in-a-non-trivial-app
+   //    and:  https://learn.microsoft.com/en-us/dotnet/core/extensions/logger-message-generator
+   // [LoggerMessage(Level = LogLevel.Information, Message = "Hello World! Logging is {Description}.")]
+   // static partial void LogStartupMessage(ILogger logger, string description);
+
+   private static IMvuMessage deserializeMessage(string webMessage, ILogger? appLogger) {
+      appLogger?.LogTrace("### web message [{str}]", webMessage);
+
+      // if (webMessage == "StartMvuProgram") {
+      //    await runMvuProgramAsync1();
+      // }
+      // else
+      if (webMessage.StartsWith("msg:")) {
+         switch (webMessage[4..]) {
+            case "increment1":      return MvuMessages.Request_Increment1();
+            case "incrementrandom": return MvuMessages.Request_IncrementRandom();
+         }
+      }
+      throw new NotImplementedException($"message not handled: [{webMessage}]");
    }
 }
