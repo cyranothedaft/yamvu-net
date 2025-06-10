@@ -54,10 +54,6 @@ class EntryPoint {
       ILogger? messagePumpLogger = loggerFactory?.CreateLogger("WM");
       ILogger? programLogger     = loggerFactory?.CreateLogger("prog");
 
-
-
-
-
       ILogger? windowLogger = loggerFactory?.CreateLogger("win");
       ILogger? webViewLogger = loggerFactory?.CreateLogger("web");
 
@@ -82,30 +78,6 @@ class EntryPoint {
       Console.ReadLine();
 #endif
       return exitCode;
-
-      // int exitCode = Window.CreateAndShow(WindowTitle, BackgroundColor,
-      //                                     afterShowWindowFunc: hwnd => {
-      //
-      //                                                             WebView.InitController(hwnd, handleMessageFromWebViewAsync, uiLogger);
-      //
-      //                                                             WebView webView = new();
-      //                                                             int exitCode = WebViewMvuHost.RunMvuApp(handleMessageFromWebViewAsyncDelegate: (string messageReceived, Func<string, Task> asyncAction, Action<IMvuMessage> dispatchMessage) => {
-      //                                                                // TODO: prevent injection attacks
-      //                                                                Message message = deserializeMessage(messageReceived);
-      //                                                                dispatchMessage(message);
-      //                                                                                                                                            }
-      //                                                                                                     ,
-      //                                                                                                     () => MvuMessages.Request_Quit(),
-      //
-      //                                                                                                     // ReSharper disable once AccessToDisposedClosure
-      //                                                                                                     () => Component.GetAsComponent(new AppServices_Real(servicesLogger),
-      //                                                                                                                                    (dispatch, model) => ViewBuilder.BuildView(dispatch, model, uiLogger),
-      //                                                                                                                                    programLogger,
-      //                                                                                                                                    loggerFactory),
-      //                                                                                                     loggerFactory);
-      //                                                             return exitCode;
-      //
-      //                                                          });
    }
 
 
@@ -118,10 +90,6 @@ class EntryPoint {
    private static IMvuMessage deserializeMessage(string webMessage, ILogger? appLogger) {
       appLogger?.LogTrace("### web message [{str}]", webMessage);
 
-      // if (webMessage == "StartMvuProgram") {
-      //    await runMvuProgramAsync1();
-      // }
-      // else
       if (webMessage.StartsWith("msg:")) {
          switch (webMessage[4..]) {
             case "increment1":      return MvuMessages.Request_Increment1();

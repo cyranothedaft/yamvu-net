@@ -28,12 +28,10 @@ internal static class ViewBuilder {
             {
                // Script(ViewScript),
                P($"Counter: ", Span(model.Counter.ToString())),
-               Button("Increment (1)", @class("primary center"), onclick("sendMessage('msg:increment1')")),
-               Button("Increment (Random)", @class("primary center"), onclick("sendMessage('msg:incrementrandom')")),
-
-               // TODO:
-               // <br /><button id="increment1Button" class="bg-indigo-600 hover:bg-indigo-800 text-white font-bold py-1 px-4 rounded-md self-center">Increment 1</button>
-               // <br /><button id="incrementRandomButton" class="bg-indigo-600 hover:bg-indigo-800 text-white font-bold py-1 px-4 rounded-md self-center">Increment Random</button>
+               Br(),
+               Button("Increment (1)",      @class("bg-indigo-600 hover:bg-indigo-800 text-white font-bold py-1 px-4 rounded-md self-center"), onclick("sendMessage('msg:increment1')")),
+               Br(),
+               Button("Increment (Random)", @class("bg-indigo-600 hover:bg-indigo-800 text-white font-bold py-1 px-4 rounded-md self-center"), onclick("sendMessage('msg:incrementrandom')")),
 
             }
            .Render();
@@ -41,6 +39,7 @@ internal static class ViewBuilder {
    // like this:  https://github.com/codechem/CC.CSX?tab=readme-ov-file
 
    private static HtmlNode Button(params HtmlNode[] contents) => new HtmlTag(contents, "button", CanSelfClose: false);
+   private static HtmlNode Br    (params HtmlNode[] contents) => new HtmlTag(contents, "br",     CanSelfClose: true );
    private static HtmlNode P     (params HtmlNode[] contents) => new HtmlTag(contents, "p"     , CanSelfClose: false);
    private static HtmlNode Script(params HtmlNode[] contents) => new HtmlTag(contents, "script", CanSelfClose: false);
    private static HtmlNode Span  (params HtmlNode[] contents) => new HtmlTag(contents, "span"  , CanSelfClose: false);
