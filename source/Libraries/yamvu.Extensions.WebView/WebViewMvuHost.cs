@@ -2,7 +2,6 @@
 using System.Text;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
-using WelterKit.Std;
 using yamvu.core.Primitives;
 using yamvu.Runners;
 
@@ -21,7 +20,8 @@ public static class WebViewMvuHost {
                                                       Func<string, IMvuMessage> deserializeMessage,
                                                       ILogger? appLogger, ILoggerFactory? loggerFactory) where TView : IWebViewView {
 
-      webViewWindow.WebView.Loaded += runMvuProgram;
+      webViewWindow.WebView.Initialized += () => webViewWindow.WebView.LoadPage();
+      webViewWindow.WebView.PageLoaded += runMvuProgram;
       return;
 
 
@@ -143,8 +143,11 @@ public static class WebViewMvuHost {
       //string javascriptEncodedHtml = System.Text.Encodings.Web.JavaScriptEncoder.Default.Encode(view.Html);
 
       // fire and forget
-      _ = webViewWindow.WebView.ExecuteScriptAsync("test();")
-                       .ConfigureAwait(continueOnCapturedContext: false);
+
+      var task = webViewWindow.WebView.ExecuteScriptAsync($"window.replaceHtml(atob('{javascriptEncodedHtml}'))");
+
+      //                          .ConfigureAwait(continueOnCapturedContext: false);
+      // string? result = task.GetAwaiter().GetResult();
 
       //_ = webViewWindow.ExecuteScriptAsync("replaceViewEncoded('" + javascriptEncodedHtml + "');");
    }

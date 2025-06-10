@@ -59,14 +59,12 @@ class EntryPoint {
 
 
       ILogger? windowLogger = loggerFactory?.CreateLogger("win");
-      MinimalWindow window = MinimalWindow.Create(WindowTitle, WindowWidth, WindowHeight, BackgroundColor, windowLogger);
-      window.Show();
-
       ILogger? webViewLogger = loggerFactory?.CreateLogger("web");
-      MinimalWebView webView = MinimalWebView.Init(window, webViewLogger);
+
+      (MinimalWindow window, MinimalWebView webView) = MinimalWebViewSample.Lib.WebViewWindow.Create(WindowTitle, WindowWidth, WindowHeight, BackgroundColor,
+                                                                                                     windowLogger, webViewLogger);
 
       WebViewWindow webViewWindow = new WebViewWindow(window, webView);
-
       webViewWindow.AttachMvuProgram(MvuMessages.Request_Quit,
                                      () => Component.GetAsComponent(new AppServices_Real(servicesLogger),
                                                                     (dispatch, model) => ViewBuilder.BuildView(dispatch, model, uiLogger),
@@ -74,9 +72,15 @@ class EntryPoint {
                                                                     loggerFactory),
                                      webMessage => deserializeMessage(webMessage, appLogger),
                                      appLogger, loggerFactory);
-
+      window.Show();
       int exitCode = MessagePump.Run(messagePumpLogger);
 
+#if DEBUG
+      Console.WriteLine("~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~");
+      Console.WriteLine($"Ended with exit code {exitCode}.");
+      Console.WriteLine("Press enter to exit.");
+      Console.ReadLine();
+#endif
       return exitCode;
 
       // int exitCode = Window.CreateAndShow(WindowTitle, BackgroundColor,
