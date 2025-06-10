@@ -143,13 +143,8 @@ public static class WebViewMvuHost {
       //string javascriptEncodedHtml = System.Text.Encodings.Web.JavaScriptEncoder.Default.Encode(view.Html);
 
       // fire and forget
-
-      var task = webViewWindow.WebView.ExecuteScriptAsync($"window.replaceHtml(atob('{javascriptEncodedHtml}'))");
-
-      //                          .ConfigureAwait(continueOnCapturedContext: false);
-      // string? result = task.GetAwaiter().GetResult();
-
-      //_ = webViewWindow.ExecuteScriptAsync("replaceViewEncoded('" + javascriptEncodedHtml + "');");
+      _ = webViewWindow.WebView.ExecuteScriptAsync($"window.replaceHtml(atob('{javascriptEncodedHtml}'))")
+                               .ConfigureAwait(continueOnCapturedContext: false);
    }
 
 
