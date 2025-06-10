@@ -10,38 +10,57 @@
 
 <body class="p-5 bg-gray-900 text-indigo-200">
 
-<h1 class="mb-5 font-mono text-indigo-400 text-5xl">Welcome</h1>
-<p class="mb-5">to an MVU sample in a WebView2-hosted UI.</p>
+    <h1 class="mb-5 font-mono text-indigo-400 text-5xl">Welcome</h1>
+    <p class="mb-5">to an MVU sample in a WebView2-hosted UI.</p>
 
-<button id="btn1" class="bg-indigo-600 hover:bg-indigo-800 text-white font-bold py-1 px-4 rounded-md self-center">Click me to demo .NET-JS interop</button>
+    <button id="messageBoxButton" class="bg-indigo-600 hover:bg-indigo-800 text-white font-bold py-1 px-4 rounded-md self-center">Show a message box in UI thread</button>
+    <button id="alertScriptButton" class="bg-indigo-600 hover:bg-indigo-800 text-white font-bold py-1 px-4 rounded-md self-center">Invoke javascript from UI thread</button>
+    <button id="callFunctionButton" class="bg-indigo-600 hover:bg-indigo-800 text-white font-bold py-1 px-4 rounded-md self-center">Call a javascript function via UI-invoked script</button>
+    <button id="replaceHtmlButton" class="bg-indigo-600 hover:bg-indigo-800 text-white font-bold py-1 px-4 rounded-md self-center">Replace HTML via UI-invoked script function</button>
 
-<div id="mvudiv">
-    <p class="text-center">
-        - Initializing -
-    </p>
-</div>
+    <div id="mvudiv">(not initialized)</div>
 
-<script>
+    <script>
 
-    // btn1.onclick = (event) => {
-    //     sendMessage("😎💾😎");
-    // }
+        messageBoxButton.onclick = (event) => {
+            // sendMessage("😎💾😎");
+            sendMessage("MsgBox");
+        }
 
-
-    var mvudiv = document.getElementById('mvudiv');
+        alertScriptButton.onclick = (event) => {
+            sendMessage("AlertScript");
+        }
 
 
-    function sendMessage(msg) {
-        window.chrome.webview.postMessage('msg:' + msg);
-    }
+        callFunctionButton.onclick = (event) => {
+            sendMessage("CallFunction");
+        }
 
-    // window.external.receiveMessage(message => alert(message));
 
-    function replaceView(message) {
-        mvudiv.innerHTML = message;
-    }
+        replaceHtmlButton.onclick = (event) => {
+            sendMessage("ReplaceHtml");
+        }
 
-</script>
+
+        function sendMessage(msg) {
+            window.chrome.webview.postMessage(msg);
+        }
+
+        function callMe(text) {
+            //alert(text);
+            alert('I am function callMe. I have now been called with argument "' + text + '"!');
+        }
+
+        var mvudiv = document.getElementById('mvudiv');
+        function replaceHtml(newHtml) {
+            // alert('mvudiv is currently: ' + mvudiv);
+            // alert('mvudiv.innerHTML is currently: ' + mvudiv.innerHTML);
+            // alert('now setting it to: ' + newHtml);
+            mvudiv.innerHTML = newHtml;
+            // alert('done');
+        }
+
+    </script>
 </body>
 
 </html>

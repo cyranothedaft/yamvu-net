@@ -8,13 +8,13 @@ using CounterSample.AppCore.Mvu.Messages;
 using CounterSample.AppCore.Services;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Console;
+using MinimalWebViewSample.Lib.Console;
+using MinimalWebViewSample.Lib.WebView;
+using MinimalWebViewSample.Lib.Window;
 using yamvu;
 using yamvu.core;
 using yamvu.core.Primitives;
 using yamvu.Extensions.WebView;
-using yamvu.Extensions.WebView.Library;
-using yamvu.Extensions.WebView.Library.WebView;
-using yamvu.Extensions.WebView.Library.Window;
 
 
 
@@ -32,7 +32,7 @@ class EntryPoint {
    static int Main() {
 
 #if DEBUG // By default GUI apps have no console. Open one to enable Console.WriteLine debugging 🤠
-      MinimalConsole.ShowConsole();
+      MinimalConsole.OpenConsole();
 #endif
 
       using ILoggerFactory loggerFactory = LoggerFactory.Create(builder =>
@@ -56,24 +56,24 @@ class EntryPoint {
 
 
 
-      
 
 
-
-      MinimalWindow window = MinimalWindow.Create(WindowTitle, WindowWidth, WindowHeight, BackgroundColor, uiLogger);
+      ILogger? windowLogger = loggerFactory?.CreateLogger("win");
+      MinimalWindow window = MinimalWindow.Create(WindowTitle, WindowWidth, WindowHeight, BackgroundColor, windowLogger);
       window.Show();
 
-      MinimalWebView webView = MinimalWebView.Init(window, uiLogger);
-      window.SizeChanged += webView.SetSize;
+      ILogger? webViewLogger = loggerFactory?.CreateLogger("web");
+      MinimalWebView webView = MinimalWebView.Init(window, webViewLogger);
 
-      _ = webView.RunMvuProgramAsync(MvuMessages.Request_Quit, 
-                                                    () => Component.GetAsComponent(new AppServices_Real(servicesLogger), 
-                                                                                   (dispatch, model) => ViewBuilder.BuildView(dispatch, model, uiLogger),
-                                                                                   programLogger,
-                                                                                   loggerFactory), 
-                                                    webMessage => deserializeMessage(webMessage, appLogger),
-                                                    loggerFactory);
+      WebViewWindow webViewWindow = new WebViewWindow(window, webView);
 
+      webViewWindow.AttachMvuProgram(MvuMessages.Request_Quit,
+                                     () => Component.GetAsComponent(new AppServices_Real(servicesLogger),
+                                                                    (dispatch, model) => ViewBuilder.BuildView(dispatch, model, uiLogger),
+                                                                    programLogger,
+                                                                    loggerFactory),
+                                     webMessage => deserializeMessage(webMessage, appLogger),
+                                     appLogger, loggerFactory);
 
       int exitCode = MessagePump.Run(messagePumpLogger);
 

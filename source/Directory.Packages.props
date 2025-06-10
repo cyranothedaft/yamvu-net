@@ -8,7 +8,7 @@
     <PackageVersion Include="Microsoft.Extensions.Logging.Debug" Version="9.0.5" />
     <PackageVersion Include="Microsoft.Windows.SDK.BuildTools" Version="10.0.26100.4188" />
     <PackageVersion Include="Microsoft.WindowsAppSDK" Version="1.7.250513003" />
-    <PackageVersion Include="Microsoft.Extensions.Logging.Console" Version="9.0.4" />
+    <PackageVersion Include="Microsoft.Extensions.Logging.Console" Version="9.0.5" />
     <PackageVersion Include="Microsoft.Web.WebView2" Version="1.0.1245.22" />
     <PackageVersion Include="Microsoft.Windows.CsWin32" Version="0.2.1-beta">
       <PrivateAssets>all</PrivateAssets>

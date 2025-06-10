@@ -1,40 +1,70 @@
 ﻿using System;
-using System.Text.Json;
-using System.Text.Json.Serialization;
+using System.Text;
 using System.Threading.Tasks;
 using Microsoft.Extensions.Logging;
-using Microsoft.Web.WebView2.Core;
+using WelterKit.Std;
 using yamvu.core.Primitives;
-using yamvu.Extensions.WebView.Library.WebView;
 using yamvu.Runners;
-
 
 
 namespace yamvu.Extensions.WebView;
 
 public delegate Task HandleMessageFromWebViewAsyncDelegate(string webMessageReceived, Func<string, Task> executeScriptAsyncAction, Action<IMvuMessage> dispatchMessage);
 
+
+
 public static class WebViewMvuHost {
 
+   public static void AttachMvuProgram<TModel, TView>(this WebViewWindow webViewWindow,
+                                                      Func<IMvuMessage> getQuitMessage,
+                                                      Func<MvuProgramComponent<TModel, TView>> buildMvuComponent,
+                                                      Func<string, IMvuMessage> deserializeMessage,
+                                                      ILogger? appLogger, ILoggerFactory? loggerFactory) where TView : IWebViewView {
+
+      webViewWindow.WebView.Loaded += runMvuProgram;
+      return;
 
 
-   public static async Task RunMvuProgramAsync<TModel, TView>(this MinimalWebView webView,
-                                                     Func<IMvuMessage> getQuitMessage, 
-                                                     Func<MvuProgramComponent<TModel, TView>> buildMvuComponent,
-                                                     Func<string,IMvuMessage> deserializeMessage,
-                                                     ILoggerFactory? loggerFactory) 
-   where TView:IWebViewView
-   {
-      ILogger? appLogger = loggerFactory?.CreateLogger("app");
+      async void runMvuProgram() {
+         // WebView has loaded, so start (asynchronously run) the MVU program
+         try {
+            appLogger?.LogTrace("-->>-- WebViewLoaded");
+            appLogger?.LogDebug("WebView loaded. Will now prepare MVU program.");
+            await runMvuProgramAsync(webViewWindow, getQuitMessage, buildMvuComponent, deserializeMessage, appLogger, loggerFactory);
+         }
+         catch (Exception ex) {
+            handleException(ex);
+         }
+      }
+
+      static void handleException(Exception exception)
+         => throw exception;
+   }
+
+
+   private static async Task runMvuProgramAsync<TModel, TView>(this WebViewWindow webViewWindow,
+                                                               Func<IMvuMessage> getQuitMessage,
+                                                               Func<MvuProgramComponent<TModel, TView>> buildMvuComponent,
+                                                               Func<string, IMvuMessage> deserializeMessage,
+                                                               ILogger? appLogger,
+                                                               ILoggerFactory? loggerFactory) where TView : IWebViewView {
+      // setup
+
+      appLogger?.LogDebug("MVU program - Setting up ");
 
       ExternalMessageDispatcher externalMessageDispatcher = new();
 
 
-      webView.MessageFromPage += message => handleWebMessageAsync(message,
-                                                                  exception => throw exception);
+      webViewWindow.WebView.MessageFromPage += handleWebMessageAsync;
+      webViewWindow.Window.Closing += () => {
+                                         appLogger?.LogTrace("-->>-- WindowClosing");
+                                         externalMessageDispatcher.Dispatch(getQuitMessage());
+                                      };
 
-      async void handleWebMessageAsync(string webMessage, Action<Exception> handleException) {
+
+      async void handleWebMessageAsync(string webMessage) {
          try {
+            appLogger?.LogTrace("-->>-- MessageFromWebView: {webMessage}", webMessage);
             IMvuMessage message = deserializeMessage(webMessage);
             externalMessageDispatcher.Dispatch(message);
          }
@@ -43,14 +73,23 @@ public static class WebViewMvuHost {
          }
       }
 
-      // form has loaded, so start (asynchronously run) the MVU program
+      static void handleException(Exception exception)
+         => throw exception;
+
+      // run
+
+      appLogger?.LogDebug("MVU program - Starting");
       await runMvuProgramAsync(externalMessageDispatcher,
-                               replaceViewAction: view => updateView(webView, view),
+                               updateViewAction: view => {
+                                                    appLogger?.LogTrace("-->>-- updateViewAction: {webMessage}", view);
+                                                    updateView(webViewWindow, view);
+                                                 },
                                buildMvuComponent,
                                loggerFactory);
 
-//===TODO      // the MVU program has terminated normally, so signal the form to close
-//===TODO      hostForm.Close();
+      // the MVU program has terminated normally, so signal the window to close
+      appLogger?.LogDebug("MVU program - Terminated normally. Will now close window.");
+      webViewWindow.Window.Close();
 
 
 
@@ -82,13 +121,13 @@ public static class WebViewMvuHost {
    }
 
 
-   private static async Task runMvuProgramAsync<TModel, TView>(ExternalMessageDispatcher? externalMessageDispatcher, Action<TView> replaceViewAction,
+   private static async Task runMvuProgramAsync<TModel, TView>(ExternalMessageDispatcher? externalMessageDispatcher, Action<TView> updateViewAction,
                                                                Func<MvuProgramComponent<TModel, TView>> buildMvuComponent,
                                                                ILoggerFactory? loggerFactory) {
       MvuProgramComponent<TModel, TView> mvuComponent = buildMvuComponent();
       var finalModel = await ProgramRunnerWithBus.RunProgramWithCommonBusAsync(mvuComponent.BuildProgramRunner,
                                                                                mvuComponent.BuildProgram,
-                                                                               replaceViewAction,
+                                                                               updateViewAction,
                                                                                loggerFactory,
                                                                                externalMessageDispatcher,
                                                                                mvuComponent.ProgramInfo,
@@ -98,11 +137,19 @@ public static class WebViewMvuHost {
    }
 
 
-   private static void updateView<TView>(MinimalWebView webView, TView view) where TView : IWebViewView {
+   private static void updateView<TView>(WebViewWindow webViewWindow, TView view) where TView : IWebViewView {
       // TODO: find a way to send a message directly, thus avoiding the need to encode this
-      string javascriptEncodedHtml = System.Text.Encodings.Web.JavaScriptEncoder.Default.Encode(view.Html);
+      string javascriptEncodedHtml = encodeViewContents(view.Html);
+      //string javascriptEncodedHtml = System.Text.Encodings.Web.JavaScriptEncoder.Default.Encode(view.Html);
 
       // fire and forget
-      _ = webView.ExecuteScriptAsync("replaceView(" + javascriptEncodedHtml + ")");
+      _ = webViewWindow.WebView.ExecuteScriptAsync("test();")
+                       .ConfigureAwait(continueOnCapturedContext: false);
+
+      //_ = webViewWindow.ExecuteScriptAsync("replaceViewEncoded('" + javascriptEncodedHtml + "');");
    }
+
+
+   private static string encodeViewContents(string view)
+      => Convert.ToBase64String(Encoding.UTF8.GetBytes(view));
 }
