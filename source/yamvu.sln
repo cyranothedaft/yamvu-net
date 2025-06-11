@@ -13,6 +13,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "yamvu.core", "Libraries\yam
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{8EC462FD-D22E-90A8-E5CE-7E832BA40C5D}"
 	ProjectSection(SolutionItems) = preProject
+		.editorconfig = .editorconfig
 		Directory.Build.props = Directory.Build.props
 		Directory.Build.targets = Directory.Build.targets
 		Directory.Packages.props = Directory.Packages.props
@@ -49,6 +50,14 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "yamvu.Extensions.WinForms", "Libraries\yamvu.Extensions.WinForms\yamvu.Extensions.WinForms.csproj", "{E83C9C00-A64F-462F-BC36-783055FC287B}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "yamvu.Extensions.WinUI3", "Libraries\yamvu.Extensions.WinUI3\yamvu.Extensions.WinUI3.csproj", "{11500DAE-FA75-4C09-8F9B-BD486C36540F}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "MinimalWebview", "MinimalWebview", "{CBAA8C03-8FDB-45B0-8CF2-0D825EC9585C}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MinimalWebViewCounterSample", "Samples\Apps\MinimalWebview\WebViewCounterSample-gui\MinimalWebViewCounterSample.csproj", "{5CC6762B-3A24-1B59-3585-D04B874300D4}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "yamvu.Extensions.WebView", "Libraries\yamvu.Extensions.WebView\yamvu.Extensions.WebView.csproj", "{56CFD254-C86E-4F6F-88FA-B0F85C8AFC6D}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MinimalWebViewSample.Lib", "..\..\MinimalWebViewSample\lib\MinimalWebViewSample.Lib.csproj", "{6B491CB1-300B-4C04-4CA9-CDFB60F577E1}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -102,6 +111,18 @@ Global
 		{11500DAE-FA75-4C09-8F9B-BD486C36540F}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{11500DAE-FA75-4C09-8F9B-BD486C36540F}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{11500DAE-FA75-4C09-8F9B-BD486C36540F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{5CC6762B-3A24-1B59-3585-D04B874300D4}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{5CC6762B-3A24-1B59-3585-D04B874300D4}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{5CC6762B-3A24-1B59-3585-D04B874300D4}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{5CC6762B-3A24-1B59-3585-D04B874300D4}.Release|Any CPU.Build.0 = Release|Any CPU
+		{56CFD254-C86E-4F6F-88FA-B0F85C8AFC6D}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{56CFD254-C86E-4F6F-88FA-B0F85C8AFC6D}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{56CFD254-C86E-4F6F-88FA-B0F85C8AFC6D}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{56CFD254-C86E-4F6F-88FA-B0F85C8AFC6D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{6B491CB1-300B-4C04-4CA9-CDFB60F577E1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6B491CB1-300B-4C04-4CA9-CDFB60F577E1}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6B491CB1-300B-4C04-4CA9-CDFB60F577E1}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6B491CB1-300B-4C04-4CA9-CDFB60F577E1}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -125,6 +146,10 @@ Global
 		{B8D49037-E20B-44D7-ABF0-6BA3B934A6F6} = {44D38999-2709-4C26-ADD3-2AF33F88E77F}
 		{E83C9C00-A64F-462F-BC36-783055FC287B} = {02EA681E-C7D8-13C7-8484-4AC65E1B71E8}
 		{11500DAE-FA75-4C09-8F9B-BD486C36540F} = {02EA681E-C7D8-13C7-8484-4AC65E1B71E8}
+		{CBAA8C03-8FDB-45B0-8CF2-0D825EC9585C} = {B743B789-F6C5-4005-A000-F68749E35B9A}
+		{5CC6762B-3A24-1B59-3585-D04B874300D4} = {CBAA8C03-8FDB-45B0-8CF2-0D825EC9585C}
+		{56CFD254-C86E-4F6F-88FA-B0F85C8AFC6D} = {02EA681E-C7D8-13C7-8484-4AC65E1B71E8}
+		{6B491CB1-300B-4C04-4CA9-CDFB60F577E1} = {02EA681E-C7D8-13C7-8484-4AC65E1B71E8}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {D1147934-6BA8-408D-ACE5-E2ACF9064C3F}

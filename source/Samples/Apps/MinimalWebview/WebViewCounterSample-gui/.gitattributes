@@ -1,0 +1,7 @@
+###############################################################################
+# Set default behavior to automatically normalize line endings.
+###############################################################################
+* text=auto
+
+# exclude demo html+CSS from GitHub stats
+wwwroot/* linguist-vendored
