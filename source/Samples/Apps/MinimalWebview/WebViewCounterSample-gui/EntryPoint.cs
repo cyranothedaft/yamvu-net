@@ -58,8 +58,8 @@ class EntryPoint {
       ILogger? windowLogger = loggerFactory?.CreateLogger("win");
       ILogger? webViewLogger = loggerFactory?.CreateLogger("web");
 
-      (MinimalWindow window, MinimalWebView webView) = MinimalWebViewLib.WebViewWindow.Create(WindowTitle, WindowWidth, WindowHeight, BackgroundColor,
-                                                                                              windowLogger, webViewLogger);
+      (MinimalWindow window, MinimalWebView webView) = WebViewWindow.Create(WindowTitle, WindowWidth, WindowHeight, BackgroundColor,
+                                                                            windowLogger, webViewLogger);
 
       WebViewWindow webViewWindow = new WebViewWindow(window, webView);
       webViewWindow.AttachMvuProgram(MvuMessages.Request_Quit,
