@@ -14,6 +14,7 @@
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageVersion>
+    <PackageVersion Include="MinimalWebViewLib" Version="0.0.1-beta" />
     <PackageVersion Include="Photino.NET" Version="3.2.3" />
     <PackageVersion Include="WelterKit" Version="0.0.2-beta" />
     <PackageVersion Include="WelterKit.Testing" Version="0.0.2-beta" />

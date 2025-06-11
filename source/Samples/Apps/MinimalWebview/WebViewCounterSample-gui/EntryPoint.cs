@@ -8,9 +8,10 @@ using CounterSample.AppCore.Mvu.Messages;
 using CounterSample.AppCore.Services;
 using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.Console;
-using MinimalWebViewSample.Lib.Console;
-using MinimalWebViewSample.Lib.WebView;
-using MinimalWebViewSample.Lib.Window;
+using MinimalWebViewLib;
+using MinimalWebViewLib.Console;
+using MinimalWebViewLib.WebView;
+using MinimalWebViewLib.Window;
 using yamvu;
 using yamvu.core;
 using yamvu.core.Primitives;
@@ -57,8 +58,8 @@ class EntryPoint {
       ILogger? windowLogger = loggerFactory?.CreateLogger("win");
       ILogger? webViewLogger = loggerFactory?.CreateLogger("web");
 
-      (MinimalWindow window, MinimalWebView webView) = MinimalWebViewSample.Lib.WebViewWindow.Create(WindowTitle, WindowWidth, WindowHeight, BackgroundColor,
-                                                                                                     windowLogger, webViewLogger);
+      (MinimalWindow window, MinimalWebView webView) = MinimalWebViewLib.WebViewWindow.Create(WindowTitle, WindowWidth, WindowHeight, BackgroundColor,
+                                                                                              windowLogger, webViewLogger);
 
       WebViewWindow webViewWindow = new WebViewWindow(window, webView);
       webViewWindow.AttachMvuProgram(MvuMessages.Request_Quit,
