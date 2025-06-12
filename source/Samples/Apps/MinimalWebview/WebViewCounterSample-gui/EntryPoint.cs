@@ -1,9 +1,5 @@
 ﻿using System;
-using System.Text.Json;
-using System.Threading.Tasks;
-using Windows.Win32;
 using CounterSample.AppCore;
-using CounterSample.AppCore.Mvu;
 using CounterSample.AppCore.Mvu.Messages;
 using CounterSample.AppCore.Services;
 using Microsoft.Extensions.Logging;
@@ -12,8 +8,6 @@ using MinimalWebViewLib;
 using MinimalWebViewLib.Console;
 using MinimalWebViewLib.WebView;
 using MinimalWebViewLib.Window;
-using yamvu;
-using yamvu.core;
 using yamvu.core.Primitives;
 using yamvu.Extensions.WebView;
 

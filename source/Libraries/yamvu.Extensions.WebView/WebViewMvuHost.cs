@@ -9,8 +9,8 @@ using yamvu.Runners;
 
 namespace yamvu.Extensions.WebView;
 
-public delegate Task HandleMessageFromWebViewAsyncDelegate(string webMessageReceived, Func<string, Task> executeScriptAsyncAction, Action<IMvuMessage> dispatchMessage);
 
+public delegate Task HandleMessageFromWebViewAsyncDelegate(string webMessageReceived, Func<string, Task> executeScriptAsyncAction, Action<IMvuMessage> dispatchMessage);
 
 
 public static class WebViewMvuHost {
