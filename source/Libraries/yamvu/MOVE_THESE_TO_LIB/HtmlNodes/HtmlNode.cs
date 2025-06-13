@@ -5,7 +5,7 @@ using System.Linq;
 
 namespace yamvu.MOVE_THESE_TO_LIB.HtmlNodes;
 
-public abstract record HtmlNode(params HtmlNode[] Children) {
+public abstract record HtmlNode(params IReadOnlyList<HtmlNode> Children) {
    public abstract string Render();
 
    public static implicit operator HtmlNode(string convertFrom)
@@ -19,16 +19,16 @@ public record AttributeNode(string Name, string Value) : HtmlNode() {
 
 
 
-public abstract record ContentNode(params HtmlNode[] Children) : HtmlNode(Children);
+public abstract record ContentNode(params IReadOnlyList<HtmlNode> Children) : HtmlNode(Children);
 
 
 public record HtmlTag(
-      HtmlNode[] Children,
+      IReadOnlyList<HtmlNode> Children,
       string TagName,
       bool CanSelfClose = true
 ) : ContentNode(Children) {
    public override string Render()
-      => CanSelfClose && Children.Length == 0
+      => CanSelfClose && Children.Count == 0
                ? string.Format("<{0} />",           TagName)
                : string.Format("<{0}{1}>{2}</{3}>", TagName,
                                                     Children.OfType<AttributeNode>().Render(),
