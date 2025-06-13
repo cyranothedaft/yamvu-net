@@ -4,11 +4,11 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 using Microsoft.Extensions.Logging;
 using WinFormsCounterSample.gui.UI;
-using WinFormsCounterSample.gui.ViewPlatform;
 using WinFormsCounterSample.View;
 using yamvu;
 using yamvu.core;
 using yamvu.core.Primitives;
+using yamvu.Extensions.WinForms;
 using yamvu.Runners;
 
 

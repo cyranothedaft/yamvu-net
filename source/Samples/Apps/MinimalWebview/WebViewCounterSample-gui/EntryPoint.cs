@@ -12,10 +12,9 @@ using yamvu.core.Primitives;
 using yamvu.Extensions.WebView;
 
 
-
 namespace MinimalWebViewCounterSample;
 
-class EntryPoint {
+static class EntryPoint {
 
    private const string WindowTitle = "yamvu MinimalWebView Sample";
    private const int WindowWidth = 800;
