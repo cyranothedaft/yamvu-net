@@ -8,6 +8,7 @@ using MinimalWebViewLib;
 using MinimalWebViewLib.Console;
 using MinimalWebViewLib.WebView;
 using MinimalWebViewLib.Window;
+using WelterKit.Std.Functional;
 using yamvu.core.Primitives;
 using yamvu.Extensions.WebView;
 
@@ -81,7 +82,7 @@ static class EntryPoint {
    // [LoggerMessage(Level = LogLevel.Information, Message = "Hello World! Logging is {Description}.")]
    // static partial void LogStartupMessage(ILogger logger, string description);
 
-   private static IMvuMessage deserializeMessage(string webMessage, ILogger? appLogger) {
+   private static Maybe<IMvuMessage> deserializeMessage(string webMessage, ILogger? appLogger) {
       appLogger?.LogTrace("### web message [{str}]", webMessage);
 
       if (webMessage.StartsWith("msg:")) {
@@ -90,6 +91,7 @@ static class EntryPoint {
             case "incrementrandom": return MvuMessages.Request_IncrementRandom();
          }
       }
-      throw new NotImplementedException($"message not handled: [{webMessage}]");
+      appLogger?.LogWarning("message not handled: [{webMessage}]", webMessage);
+      return None.Value;
    }
 }

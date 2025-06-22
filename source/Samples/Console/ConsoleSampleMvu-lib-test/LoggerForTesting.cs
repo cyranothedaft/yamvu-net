@@ -24,11 +24,12 @@ internal class LoggerForTesting : ILogger {
 
 
    public IDisposable? BeginScope<TState>(TState state) where TState : notnull
-      => new EmptyDisposable(); // TODO?
+      => Disposable.Empty; // TODO?
 
 
+   private class Disposable : IDisposable {
+      public static readonly IDisposable Empty = new Disposable();
 
-   private class EmptyDisposable : IDisposable {
       public void Dispose() { }
    }
 }

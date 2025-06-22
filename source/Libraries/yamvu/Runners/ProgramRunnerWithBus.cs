@@ -45,6 +45,44 @@ public class ProgramRunnerWithBus {
    }
 
 
+   public static async Task<TModel> RunProgramWithCommonBusAsync2<TModel, TView>(Func<IMvuProgramRunner<TView>> buildProgramRunner,
+                                                                                 Func<IMvuProgram2<TModel, TView>> buildProgram,
+                                                                                 Func<TView, Task> replaceViewAsyncAction, ILoggerFactory? loggerFactory,
+                                                                                 ExternalMessageDispatcher? externalMessageDispatcher,
+                                                                                 ProgramInfo programInfo, Func<IMvuMessage, IMvuCommand> messageAsCommand,
+                                                                                 ExecuteEffectDelegate<IMvuEffect> executeEffectAction, Func<IMvuMessage, bool> isQuitMessage) {
+      ILogger? hostLogger = loggerFactory?.CreateLogger("host");
+      ILogger? busLogger = loggerFactory?.CreateLogger("bus");
+      ILogger? runWrapperLogger = loggerFactory?.CreateLogger("wrap");
+
+      IMvuProgramRunner<TView> programRunner = buildProgramRunner();
+      programRunner.ViewEmitted += onViewEmitted;
+
+      async void onViewEmitted(TView view, bool isInitialView) {
+         try {
+            await replaceViewAsyncAction(view);
+         }
+         catch (Exception exception) {
+            hostLogger?.LogError(exception, "in onViewEmitted");
+         }
+      }
+
+      hostLogger?.LogTrace("Attached ViewEmitted event");
+
+      CancellationToken busCancellationToken     = new();
+      CancellationToken programCancellationToken = new();
+
+      IMvuProgram2<TModel, TView> program = buildProgram();
+      TModel finalModel = await ProgramRunner2<IMvuCommand, TView>.RunWithBusAsync(program, programInfo, programRunner,
+                                                                                   messageAsCommand, executeEffectAction, isQuitMessage,
+                                                                                   busCancellationToken, programCancellationToken,
+                                                                                   externalMessageDispatcher: externalMessageDispatcher,
+                                                                                   busLogger: busLogger,
+                                                                                   runWrapperLogger: runWrapperLogger);
+      return finalModel;
+   }
+
+
    // private static async Task<TModel> runProgramWithCommonBusAsync<TModel>(IMvuProgramRunner<TView> programRunner,
    //                                                                        ExternalMessageDispatcher? messageFromOutsideDispatcher,
    //                                                                        // ProgramEventSources programEventSources,

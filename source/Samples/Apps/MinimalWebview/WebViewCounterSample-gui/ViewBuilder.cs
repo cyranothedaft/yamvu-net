@@ -32,7 +32,6 @@ internal static class ViewBuilder {
                Button("Increment (1)",      @class("bg-indigo-600 hover:bg-indigo-800 text-white font-bold py-1 px-4 rounded-md self-center"), onclick("sendMessage('msg:increment1')")),
                Br(),
                Button("Increment (Random)", @class("bg-indigo-600 hover:bg-indigo-800 text-white font-bold py-1 px-4 rounded-md self-center"), onclick("sendMessage('msg:incrementrandom')")),
-
             }
            .Render();
 
@@ -44,8 +43,8 @@ internal static class ViewBuilder {
    private static HtmlNode Script(params HtmlNode[] contents) => new HtmlTag(contents, "script", CanSelfClose: false);
    private static HtmlNode Span  (params HtmlNode[] contents) => new HtmlTag(contents, "span"  , CanSelfClose: false);
 
-   private static AttributeNode @class(string value) => new AttributeNode("class", value);
-   private static AttributeNode onclick(string value) => new AttributeNode("onclick", value);
+   private static AttributeNode @class(string value) => new AttributeValueNode("class", value);
+   private static AttributeNode onclick(string value) => new AttributeValueNode("onclick", value);
 
    // private static ScriptNode Script() => new ScriptNode();
    // private static      PNode P()      => new PNode();

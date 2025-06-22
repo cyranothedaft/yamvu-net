@@ -40,8 +40,8 @@ internal static class ViewBuilder {
    private static HtmlNode Script(params HtmlNode[] contents) => new HtmlTag(contents, "script", CanSelfClose: false);
    private static HtmlNode Span  (params HtmlNode[] contents) => new HtmlTag(contents, "span"  , CanSelfClose: false);
 
-   private static AttributeNode @class(string value) => new AttributeNode("class", value);
-   private static AttributeNode onclick(string value) => new AttributeNode("onclick", value);
+   private static AttributeNode @class(string value) => new AttributeValueNode("class", value);
+   private static AttributeNode onclick(string value) => new AttributeValueNode("onclick", value);
 
    // private static ScriptNode Script() => new ScriptNode();
    // private static      PNode P()      => new PNode();
