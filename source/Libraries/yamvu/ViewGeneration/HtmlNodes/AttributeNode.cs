@@ -2,7 +2,7 @@
 
 
 
-namespace yamvu.MOVE_THESE_TO_LIB.HtmlNodes;
+namespace yamvu.ViewGeneration.HtmlNodes;
 
 
 public abstract record AttributeNode(string Name) : HtmlNode();

@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 
 
-namespace yamvu.MOVE_THESE_TO_LIB.HtmlNodes;
+namespace yamvu.ViewGeneration.HtmlNodes;
 
 public static class Methods {
    // like this:  https://github.com/codechem/CC.CSX?tab=readme-ov-file

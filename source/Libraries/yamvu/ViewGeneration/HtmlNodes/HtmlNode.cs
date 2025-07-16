@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 
 
-namespace yamvu.MOVE_THESE_TO_LIB.HtmlNodes;
+namespace yamvu.ViewGeneration.HtmlNodes;
 
 public abstract record HtmlNode(params IReadOnlyList<HtmlNode> Children) {
    public abstract string Render();

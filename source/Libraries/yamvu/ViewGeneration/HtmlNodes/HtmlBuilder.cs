@@ -4,7 +4,7 @@
 // using System.Text;
 // using System.Threading.Tasks;
 //
-// namespace yamvu.MOVE_THESE_TO_LIB.HtmlNodes;
+// namespace yamvu.ViewGeneration.HtmlNodes;
 //
 // public class HtmlBuilder {
 // }
