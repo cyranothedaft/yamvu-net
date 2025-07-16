@@ -122,9 +122,13 @@ public static class Methods {
    public static HtmlNode Video       (params IReadOnlyList<HtmlNode> contents) => new HtmlTag(contents, "video"       , CanSelfClose: false);
    public static HtmlNode Wbr         (params IReadOnlyList<HtmlNode> contents) => new HtmlTag(contents, "wbr"         , CanSelfClose: false);
 
-   public static AttributeNode disabled    ()             => new BooleanAttributeNode    ("disabled");
-   public static AttributeNode @class      (string value) => new AttributeValueNode      ("class"  , value);
-   public static AttributeNode onclick     (string value) => new AttributeValueNode      ("onclick", value);
-   public static AttributeNode style       (string value) => new AttributeValueNode      ("style"  , value);
+   public static AttributeNode disabled()             => new BooleanAttributeNode("disabled");
+   public static AttributeNode @class  (string value) => new AttributeValueNode  ("class"  , value);
+   public static AttributeNode onclick (string value) => new AttributeValueNode  ("onclick", value);
+   public static AttributeNode style   (string value) => new AttributeValueNode  ("style"  , value);
 
+
+   public static HtmlNode Node(string tagName, bool canSelfClose = false, params IReadOnlyList<HtmlNode> contents) => new HtmlTag(contents, tagName, canSelfClose);
+   public static AttributeNode boolAttrib(string name) => new BooleanAttributeNode(name);
+   public static AttributeNode attrib(string name, string value) => new AttributeValueNode(name, value);
 }
