@@ -3,8 +3,6 @@ using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 using Microsoft.Extensions.Logging;
-using WinFormsCounterSample.gui.UI;
-using WinFormsCounterSample.View;
 using yamvu;
 using yamvu.core;
 using yamvu.core.Primitives;
@@ -12,12 +10,11 @@ using yamvu.Extensions.WinForms;
 using yamvu.Runners;
 
 
-
-namespace WinFormsCounterSample.gui;
+namespace yamvu.Extensions.WinForms;
 
 public interface IMvuHost<TContext> {
    void RunApp_SynchronousBlocking(TContext context);
-   void EmbedMvuProgramInForm(TContext context);
+   void EmbedMvuProgramInForm<TModel, TView>(TContext context, Func<IMvuMessage> getQuitMessage, Func<MvuProgramComponent<TModel, PlatformView<TView>>> buildMvuComponent) where TView : IWinFormsView;
 }
 
 
@@ -37,12 +34,13 @@ where TForm:Form,IMvuControlContainer {
    }
 
 
-   public void EmbedMvuProgramInForm(TForm hostForm) {
-      embedMvuProgramInForm(hostForm, _loggerFactory);
+   public void EmbedMvuProgramInForm<TModel, TView>(TForm hostForm, Func<IMvuMessage> getQuitMessage, Func<MvuProgramComponent<TModel, PlatformView<TView>>> buildMvuComponent) where TView : IWinFormsView {
+      embedMvuProgramInForm(hostForm, getQuitMessage, buildMvuComponent, _loggerFactory);
    }
 
 
-   private static void embedMvuProgramInForm(TForm hostForm, Func<IMvuMessage> getQuitMessage, ILoggerFactory? loggerFactory) {
+   private static void embedMvuProgramInForm<TModel, TView>(TForm hostForm, Func<IMvuMessage> getQuitMessage, Func<MvuProgramComponent<TModel, PlatformView<TView>>> buildMvuComponent,
+                                                            ILoggerFactory? loggerFactory) where TView : IWinFormsView {
       ILogger? appLogger = loggerFactory?.CreateLogger("app");
 
       ExternalMessageDispatcher externalMessageDispatcher = new();
@@ -52,6 +50,7 @@ where TForm:Form,IMvuControlContainer {
             // form has loaded, so start (asynchronously run) the MVU program
             await runMvuProgramAsync(externalMessageDispatcher,
                                      replaceViewAction: view => replaceMvuComponents(hostForm.MvuComponentContainer, view),
+                                     buildMvuComponent,
                                      loggerFactory);
 
             // the MVU program has terminated normally, so signal the form to close
@@ -73,13 +72,15 @@ where TForm:Form,IMvuControlContainer {
    }
 
 
-   private static async Task runMvuProgramAsync<TModel, TView>(ExternalMessageDispatcher? externalMessageDispatcher, Action<PlatformView<TView>> replaceViewAction,
+   private static async Task runMvuProgramAsync<TModel, TView>(ExternalMessageDispatcher? externalMessageDispatcher,
+                                                               // Func<MvuMessageDispatchDelegate, TModel, ILogger, PlatformView<TView>> buildViewFromModel,
+                                                               Action<PlatformView<TView>> replaceViewAction,
                                                                Func<MvuProgramComponent<TModel, PlatformView<TView>>> buildMvuComponent,
                                                                ILoggerFactory? loggerFactory) {
       ILogger? uiLogger = loggerFactory?.CreateLogger("ui");
 
-      PlatformView<TView> view(MvuMessageDispatchDelegate dispatch, TModel model)
-         => ViewBuilder.BuildViewFromModel(dispatch, model, uiLogger);
+      // PlatformView<TView> view(MvuMessageDispatchDelegate dispatch, TModel model)
+      //    => buildViewFromModel(dispatch, model, uiLogger);
 
       MvuProgramComponent<TModel, PlatformView<TView>> mvuComponent = buildMvuComponent();
       // var programRunnerWithServices = ProgramRunnerWithServices<PlatformView<TView>>.Build(externalMessageDispatcher, _loggerFactory);
@@ -95,10 +96,10 @@ where TForm:Form,IMvuControlContainer {
    }
 
 
-   private static void replaceMvuComponents<TView>(Control componentContainer, PlatformView<TView> view) {
+   private static void replaceMvuComponents<TView>(Control componentContainer, PlatformView<TView> view) where TView : IWinFormsView {
       componentContainer.SuspendLayout();
       componentContainer.Controls.Clear();
-      componentContainer.Controls.AddRange(view.MvuView.Controls.ToArray());
+      componentContainer.Controls.AddRange(view.MvuView.Contents.ToArray());
       componentContainer.ResumeLayout();
       componentContainer.Invalidate();
    }

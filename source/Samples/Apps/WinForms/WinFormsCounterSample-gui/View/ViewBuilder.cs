@@ -6,8 +6,7 @@ using yamvu.core;
 using yamvu.Extensions.WinForms;
 
 
-
-namespace WinFormsCounterSample.View;
+namespace WinFormsCounterSample.gui.View;
 
 internal class ViewBuilder {
 
