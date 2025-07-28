@@ -3,7 +3,7 @@
 namespace WinUI3CounterSample.View;
 
 public record ExternalInputBindings(
-      Action? FormClosed
+      Action? WindowClosed
 ) {
-   public ExternalInputBindings() : this(FormClosed: null) { }
+   public ExternalInputBindings() : this(WindowClosed: null) { }
 }

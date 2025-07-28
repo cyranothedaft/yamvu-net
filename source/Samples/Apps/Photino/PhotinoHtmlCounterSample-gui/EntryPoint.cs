@@ -12,7 +12,7 @@ namespace PhotinoHtmlCounterSample.gui;
 
 //NOTE: To hide the console window, go to the project properties and change the Output Type to Windows Application.
 // Or edit the .csproj file and change the <OutputType> tag from "WinExe" to "Exe".
-internal static class Program {
+internal static class EntryPoint {
    [STAThread]
    static void Main(string[] args) {
       using ILoggerFactory loggerFactory = buildLoggerFactory(LogLevel.Trace);

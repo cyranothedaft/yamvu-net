@@ -65,18 +65,15 @@ internal static class EntryPoint {
          ViewRenderer.DisplayView(ViewBuilder.BuildInitialView(), updateBindings);
 
          // run the program until it terminates
-      Model finalModel = await ProgramRunnerWithBus.RunProgramWithCommonBusAsync(mvuComponent.BuildProgramRunner,
-                                                                                 mvuComponent.BuildProgram,
-                                                                                 replaceViewAction: platformView => ViewRenderer.DisplayView(platformView, updateBindings),
-                                                                                 loggerFactory,
-                                                                                 externalMessageDispatcher,
-                                                                                 mvuComponent.ProgramInfo,
-                                                                                 mvuComponent.MessageAsCommandFunc,
-                                                                                 mvuComponent.ExecuteEffectDelegate,
-                                                                                 mvuComponent.IsQuitMessageFunc);
-         // await programRunnerWithServices.RunProgramWithCommonBusAsync(,
-         //                                                              ,
-         //                                                              loggerFactory);
+         Model finalModel = await ProgramRunnerWithBus.RunProgramWithCommonBusAsync(mvuComponent.BuildProgramRunner,
+                                                                                    mvuComponent.BuildProgram,
+                                                                                    replaceViewAction: platformView => ViewRenderer.DisplayView(platformView, updateBindings),
+                                                                                    loggerFactory,
+                                                                                    externalMessageDispatcher,
+                                                                                    mvuComponent.ProgramInfo,
+                                                                                    mvuComponent.MessageAsCommandFunc,
+                                                                                    mvuComponent.ExecuteEffectDelegate,
+                                                                                    mvuComponent.IsQuitMessageFunc);
 
          appLogger?.LogInformation("Program terminated normally - application will now end.");
       }

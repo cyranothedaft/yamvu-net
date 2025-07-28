@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Hello, world!</title>
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <link rel="stylesheet" type="text/css" href="./tailwind.css" />
+</head>
+
+<body class="p-5 bg-gray-900 text-indigo-200">
+
+    <h1 class="mb-5 font-mono text-indigo-400 text-5xl">Welcome</h1>
+    <p class="mb-5">to an MVU sample in a WebView2-hosted UI.</p>
+
+    <br />
+
+    <div id="mvudiv">(not initialized)</div>
+
+    <script>
+
+        function sendMessage(msg) {
+            window.chrome.webview.postMessage(msg);
+        }
+
+        function iReturnSomething() {
+            //alert(text);
+            alert('I am function iReturnSomething! I will now return "Something".');
+            return 'Something';
+        }
+
+        var mvudiv = document.getElementById('mvudiv');
+        function replaceHtml(newHtml) {
+            // alert('mvudiv is currently: ' + mvudiv);
+            // alert('mvudiv.innerHTML is currently: ' + mvudiv.innerHTML);
+            // alert('now setting it to: ' + newHtml);
+            mvudiv.innerHTML = newHtml;
+            // alert('done');
+        }
+
+    </script>
+</body>
+
+</html>
