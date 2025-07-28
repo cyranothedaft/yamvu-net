@@ -10,6 +10,7 @@ namespace WinFormsCounterSample.gui.View;
 
 internal class ViewBuilder {
 
+   // TODO: why is this not used?
    public static ProgramView BuildInitialView()
       => new([ buildInitialView() ],
              new ViewInputBindings(),
