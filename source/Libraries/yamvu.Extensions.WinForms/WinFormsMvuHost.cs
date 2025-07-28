@@ -7,7 +7,6 @@ using yamvu.core.Primitives;
 using yamvu.Runners;
 
 
-
 namespace yamvu.Extensions.WinForms;
 
 public static class WinFormsMvuHost {

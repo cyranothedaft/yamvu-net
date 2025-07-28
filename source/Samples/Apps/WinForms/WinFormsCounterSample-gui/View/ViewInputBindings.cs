@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace WinFormsCounterSample.View;
+namespace WinFormsCounterSample.gui.View;
 
 public record ViewInputBindings(
       Action? Increment1ButtonPressed,

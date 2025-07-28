@@ -7,5 +7,4 @@ namespace yamvu.Extensions.WinForms;
 
 public interface IWinFormsView {
    IImmutableList<Control> Contents { get; }
-   ExternalInputBindings ExternalInputBindings { get; }
 }
