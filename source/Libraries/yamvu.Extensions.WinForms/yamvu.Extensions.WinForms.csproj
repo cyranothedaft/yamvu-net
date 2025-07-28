@@ -3,9 +3,32 @@
   <PropertyGroup>
     <TargetFramework>net8.0-windows</TargetFramework>
     <UseWindowsForms>true</UseWindowsForms>
+
+    <AssemblyName>yamvu.Extensions.WinForms</AssemblyName>
+    <RootNamespace>yamvu.Extensions.WinForms</RootNamespace>
+
+    <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
+    <PackageId>yamvu.Extensions.WinForms</PackageId>
+    <Version>$(VersionPrefix)$(VersionSuffix)</Version>
+
+    <Authors>Eric Tolman</Authors>
+    <Title>yamvu WinForms extension library</Title>
+    <Description>Extension library for MVU programs using Windows Forms.</Description>
+    <Copyright>Copyright (c) 2025 Eric Tolman</Copyright>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
+    <PackageReadmeFile>README.md</PackageReadmeFile>
+    <PackageProjectUrl>https://github.com/cyranothedaft/yamvu-net</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/cyranothedaft/yamvu-net.git</RepositoryUrl>
   </PropertyGroup>
 
-  <ItemGroup>
+   <ItemGroup>
+      <None Include="..\..\..\README.md">
+         <Pack>True</Pack>
+         <PackagePath>\</PackagePath>
+      </None>
+   </ItemGroup>
+
+   <ItemGroup>
     <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" />
   </ItemGroup>
 
