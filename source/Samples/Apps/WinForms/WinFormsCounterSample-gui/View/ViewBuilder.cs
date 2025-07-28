@@ -6,11 +6,11 @@ using yamvu.core;
 using yamvu.Extensions.WinForms;
 
 
-
-namespace WinFormsCounterSample.View;
+namespace WinFormsCounterSample.gui.View;
 
 internal class ViewBuilder {
 
+   // TODO: why is this not used?
    public static ProgramView BuildInitialView()
       => new([ buildInitialView() ],
              new ViewInputBindings(),

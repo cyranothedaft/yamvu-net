@@ -5,7 +5,7 @@ using CounterSample.AppCore.Mvu.Messages;
 using CounterSample.AppCore.Services;
 using Microsoft.Extensions.Logging;
 using WinFormsCounterSample.gui.UI;
-using WinFormsCounterSample.View;
+using WinFormsCounterSample.gui.View;
 using yamvu;
 using yamvu.Extensions.WinForms;
 
