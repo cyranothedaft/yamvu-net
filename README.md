@@ -29,7 +29,18 @@ Made from scratch using only the freshest organic ingredients (blood, sweat, tea
 
 - ### yamvu.Extensions.WinForms
 
-  Adapts a WinForms UI for using yamvu. References MinimalWebViewLib:
+  Adapts a WinForms UI for using yamvu.
+
+  _Targets .NET 8.0 + Windows_.
+
+  https://www.nuget.org/packages/yamvu.Extensions.WinForms/
+
+  `dotnet add package yamvu.Extensions.WinForms --version 0.4.0-beta`
+
+
+- ### yamvu.Extensions.WebView
+
+  Adapts a WebView UI for using yamvu. References MinimalWebViewLib:
    - github: https://github.com/cyranothedaft/MinimalWebViewLib
    - nuget: https://www.nuget.org/packages/MinimalWebViewLib/
 
@@ -38,17 +49,6 @@ Made from scratch using only the freshest organic ingredients (blood, sweat, tea
   https://www.nuget.org/packages/yamvu.Extensions.WebView/
 
   `dotnet add package yamvu.Extensions.WebView --version 0.4.0-beta`
-
-
-- ### yamvu.Extensions.WebView
-
-  Adapts a WebView UI for using yamvu.
-
-  _Targets .NET 8.0 + Windows_.
-
-  https://www.nuget.org/packages/yamvu.Extensions.WinForms/
-
-  `dotnet add package yamvu.Extensions.WinForms --version 0.4.0-beta`
 
 
 - ### yamvu.Testing
