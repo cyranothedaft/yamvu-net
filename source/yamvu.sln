@@ -57,6 +57,10 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "MinimalWebViewCounterSample
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "yamvu.Extensions.WebView", "Libraries\yamvu.Extensions.WebView\yamvu.Extensions.WebView.csproj", "{56CFD254-C86E-4F6F-88FA-B0F85C8AFC6D}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "TUI", "TUI", "{026506C9-193C-42CF-A3C0-AF6A499CDA6E}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TuiCounterSample-ui", "Samples\Apps\TUI\TuiCounterSample-ui\TuiCounterSample-ui.csproj", "{7ECFB088-D88E-8150-D86E-867FE98CE4D7}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -117,6 +121,10 @@ Global
 		{56CFD254-C86E-4F6F-88FA-B0F85C8AFC6D}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{56CFD254-C86E-4F6F-88FA-B0F85C8AFC6D}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{56CFD254-C86E-4F6F-88FA-B0F85C8AFC6D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7ECFB088-D88E-8150-D86E-867FE98CE4D7}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7ECFB088-D88E-8150-D86E-867FE98CE4D7}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7ECFB088-D88E-8150-D86E-867FE98CE4D7}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7ECFB088-D88E-8150-D86E-867FE98CE4D7}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -143,6 +151,8 @@ Global
 		{CBAA8C03-8FDB-45B0-8CF2-0D825EC9585C} = {B743B789-F6C5-4005-A000-F68749E35B9A}
 		{5CC6762B-3A24-1B59-3585-D04B874300D4} = {CBAA8C03-8FDB-45B0-8CF2-0D825EC9585C}
 		{56CFD254-C86E-4F6F-88FA-B0F85C8AFC6D} = {02EA681E-C7D8-13C7-8484-4AC65E1B71E8}
+		{026506C9-193C-42CF-A3C0-AF6A499CDA6E} = {B743B789-F6C5-4005-A000-F68749E35B9A}
+		{7ECFB088-D88E-8150-D86E-867FE98CE4D7} = {026506C9-193C-42CF-A3C0-AF6A499CDA6E}
 	EndGlobalSection
 	GlobalSection(ExtensibilityGlobals) = postSolution
 		SolutionGuid = {D1147934-6BA8-408D-ACE5-E2ACF9064C3F}
