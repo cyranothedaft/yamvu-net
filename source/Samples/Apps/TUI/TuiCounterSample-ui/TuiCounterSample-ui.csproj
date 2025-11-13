@@ -9,6 +9,11 @@
     <PackageReference Include="Microsoft.Extensions.Logging" />
     <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" />
     <PackageReference Include="Terminal.Gui" />
+    <PackageReference Include="WelterKit.Telemetry" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <ProjectReference Include="..\..\..\ConsoleSampleMvu-lib\CounterAppCore-lib.csproj" />
   </ItemGroup>
 
 </Project>
